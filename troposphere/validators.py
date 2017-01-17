@@ -73,6 +73,14 @@ def s3_bucket_name(b):
         raise ValueError("%s is not a valid s3 bucket name" % b)
 
 
+def elb_name(b):
+    elb_name_re = compile(r'^[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,30}[a-zA-Z0-9]{1})?$')  # noqa
+    if elb_name_re.match(b):
+        return b
+    else:
+        raise ValueError("%s is not a valid elb name" % b)
+
+
 def encoding(encoding):
     valid_encodings = ['plain', 'base64']
     if encoding not in valid_encodings:
@@ -135,3 +143,26 @@ def iam_group_name(group_name):
         raise ValueError('IAM Role Name may not exceed 128 characters')
     iam_names(group_name)
     return group_name
+
+
+def mutually_exclusive(class_name, properties, conditionals):
+    found_list = []
+    for c in conditionals:
+        if c in properties:
+            found_list.append(c)
+    seen = set(found_list)
+    specified_count = len(seen)
+    if specified_count > 1:
+        raise ValueError(('%s: only one of the following'
+                          ' can be specified: %s') % (
+                          class_name, ', '.join(conditionals)))
+    return specified_count
+
+
+def exactly_one(class_name, properties, conditionals):
+    specified_count = mutually_exclusive(class_name, properties, conditionals)
+    if specified_count != 1:
+        raise ValueError(('%s: one of the following'
+                          ' must be specified: %s') % (
+                          class_name, ', '.join(conditionals)))
+    return specified_count

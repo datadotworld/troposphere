@@ -12,7 +12,7 @@ import types
 
 from . import validators
 
-__version__ = "1.8.2"
+__version__ = "1.9.1"
 
 # constants for DeletionPolicy
 Delete = 'Delete'
@@ -26,6 +26,11 @@ AWS_NO_VALUE = 'AWS::NoValue'
 AWS_REGION = 'AWS::Region'
 AWS_STACK_ID = 'AWS::StackId'
 AWS_STACK_NAME = 'AWS::StackName'
+
+# Template Limits
+MAX_PARAMETERS = 60
+MAX_RESOURCES = 200
+PARAMETER_TITLE_MAX = 255
 
 valid_names = re.compile(r'^[a-zA-Z0-9]+$')
 
@@ -219,8 +224,12 @@ class BaseAWSObject(object):
         for k, (_, required) in self.props.items():
             if required and k not in self.properties:
                 rtype = getattr(self, 'resource_type', "<unknown type>")
-                raise ValueError(
-                    "Resource %s required in type %s" % (k, rtype))
+                title = getattr(self, 'title')
+                msg = "Resource %s required in type %s" % (k, rtype)
+                if title:
+                    msg += " (title: %s)" % title
+                raise ValueError(msg)
+
         self.validate()
         # Mainly used to not have an empty "Properties".
         if self.properties:
@@ -486,6 +495,9 @@ class Template(object):
         self.metadata = metadata
 
     def add_condition(self, name, condition):
+        if len(self.conditions) >= 60:
+            raise ValueError('Maximum of 60 conditions per template reached')
+
         self.conditions[name] = condition
 
     def handle_duplicate_key(self, key):
@@ -510,9 +522,14 @@ class Template(object):
         self.mappings[name] = mapping
 
     def add_parameter(self, parameter):
+        if len(self.parameters) >= MAX_PARAMETERS:
+            raise ValueError('Maximum parameters %d reached' % MAX_PARAMETERS)
         return self._update(self.parameters, parameter)
 
     def add_resource(self, resource):
+        if len(self.resources) >= MAX_RESOURCES:
+            raise ValueError('Maximum number of resources %d reached'
+                             % MAX_RESOURCES)
         return self._update(self.resources, resource)
 
     def add_version(self, version=None):
@@ -580,6 +597,12 @@ class Parameter(AWSDeclaration):
         'Description': (basestring, False),
         'ConstraintDescription': (basestring, False),
     }
+
+    def validate_title(self):
+        if len(self.title) > PARAMETER_TITLE_MAX:
+            raise ValueError("Parameter title can be no longer than "
+                             "%d characters" % PARAMETER_TITLE_MAX)
+        super(Parameter, self).validate_title()
 
     def validate(self):
         if self.properties['Type'] != 'String':

@@ -110,14 +110,23 @@ class EventSourceMapping(AWSObject):
     }
 
 
+class Environment(AWSProperty):
+
+    props = {
+        'Variables': (dict, True),
+    }
+
+
 class Function(AWSObject):
     resource_type = "AWS::Lambda::Function"
 
     props = {
         'Code': (Code, True),
         'Description': (basestring, False),
+        'Environment': (Environment, False),
         'FunctionName': (basestring, False),
         'Handler': (basestring, True),
+        'KmsKeyArn': (basestring, False),
         'MemorySize': (validate_memory_size, False),
         'Role': (basestring, True),
         'Runtime': (basestring, True),

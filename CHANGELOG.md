@@ -1,3 +1,44 @@
+## 1.9.1 (2017-01-03)
+- Improve readability of AssumeRolePolicyDocument attribute (#591)
+- Add Environment to Lambda Function (#616)
+- Adding DataSources to OpsWorks App and RdsDbInstances to OpsWorks Stack (#621)
+- Added SNS::Subscription resource (SubscriptionResource) (#622)
+- Added CodeBuild Project resource and a CodeBuild example (#624)
+- Add back support for Python 2.6 (#626)
+- Fixed missing add_resource in example Cloudwatch rule (#629)
+- Create new property Environment for aws lambda Function (#631)
+- Add KmsKeyArn to Lambda Function
+- Add CopyTagsToSnapshot to RDS::DBInstance
+- Fix pycodestyle issues with examples/Lambda.py
+- Add AWS::SSM::Association
+- Add AWS::EC2::SubnetCidrBlock and AWS::EC2::VPCCidrBlock
+- Add mutually_exclusive validator
+- Add DocumentType to AWS::SSM::Document
+- Add OpsWorks Resources: UserProfile and Volume
+- Update opsworks per 2016-11-22 changes
+- Allow both dict and string for opswork CustomJson
+- Add IPv6 support from 2016-12-01 update
+
+## 1.9.0 (2016-11-15)
+- Note: the dynamodb change below may cause backwards compatibility issues.
+  There have been deprecation warnings for a while.
+- Replace dynamodb module with dynamodb2 (#564)
+- Add CodeCommit as a supported AWS resource type
+- Add update of github Releases page to RELEASE doc
+- Update elasticache for 2016-10-12 changes (#592)
+- Support for S3 Lifecycle Rule property NoncurrentVersionTransitions (#596)
+- Include resource title in required attr exception (#597)
+- Added Placement class for the Placement property in LaunchSpecifications. (#598)
+- Add EFS example (#601)
+- Add support to old mysql db engine (#602)
+- Fix typo in Example Allowed Values (#603)
+- Remove `title` validation. Fixes #428 (#605)
+- Add support for conditions in cfn2py script (#606)
+- Added MongoDB default port to constants (#608)
+- Add HttpVersion prop to DistributionConfig (CloudFront HTTP/2 Support) (#609)
+- Added missing QueryStringCacheKeys property to CloudFront ForwardedValues (#612)
+- Add a validator for ELB names (#615)
+
 ## 1.8.2 (2016-10-08)
 - Add SpotPrice to SpotFleet LaunchSpecifications
 - Add new properties to ECS (Clustername to Cluster and Family to TaskDefinition)
