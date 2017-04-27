@@ -12,9 +12,10 @@ from .validators import boolean, network_port, integer, positive_integer
 # http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBInstance.html
 
 VALID_STORAGE_TYPES = ('standard', 'gp2', 'io1')
-VALID_DB_ENGINES = ('MySQL', 'mysql', 'oracle-se1', 'oracle-se', 'oracle-ee',
-                    'sqlserver-ee', 'sqlserver-se', 'sqlserver-ex',
-                    'sqlserver-web', 'postgres', 'aurora', 'mariadb')
+VALID_DB_ENGINES = ('MySQL', 'mysql', 'oracle-se1', 'oracle-se2', 'oracle-se',
+                    'oracle-ee', 'sqlserver-ee', 'sqlserver-se',
+                    'sqlserver-ex', 'sqlserver-web', 'postgres', 'aurora',
+                    'mariadb')
 VALID_LICENSE_MODELS = ('license-included', 'bring-your-own-license',
                         'general-public-license', 'postgresql-license')
 
@@ -159,6 +160,7 @@ class DBInstance(AWSObject):
         'StorageEncrypted': (boolean, False),
         'StorageType': (basestring, False),
         'Tags': (list, False),
+        'Timezone': (basestring, False),
         'VPCSecurityGroups': ([basestring], False),
     }
 
@@ -221,7 +223,7 @@ class DBInstance(AWSObject):
 
         allocated_storage = self.properties.get('AllocatedStorage')
         iops = self.properties.get('Iops', None)
-        if iops:
+        if iops and not isinstance(iops, AWSHelperFn):
             if not isinstance(allocated_storage, AWSHelperFn) and \
                     allocated_storage < 100:
                 raise ValueError("AllocatedStorage must be at least 100 when "

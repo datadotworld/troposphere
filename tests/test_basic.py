@@ -1,7 +1,6 @@
-import json
 import unittest
-from troposphere import awsencode, AWSObject, AWSProperty, Output, Parameter
-from troposphere import Ref, Sub, Template
+from troposphere import AWSObject, AWSProperty, Output, Parameter
+from troposphere import Join, Ref, Split, Sub, Template
 from troposphere.ec2 import Instance, SecurityGroupRule
 from troposphere.elasticloadbalancing import HealthCheck
 from troposphere.validators import positive_integer
@@ -120,6 +119,18 @@ class TestValidators(unittest.TestCase):
     def test_helperfun(self):
         FakeAWSObject('fake', helperfun=Ref('fake_ref'))
 
+    def test_exception(self):
+        def ExceptionValidator(x):
+            raise ValueError
+
+        class ExceptionAWSProperty(AWSProperty):
+            props = {
+                'foo': (ExceptionValidator, True),
+            }
+
+        with self.assertRaises(ValueError):
+            ExceptionAWSProperty(foo='bar')
+
 
 class TestHealthCheck(unittest.TestCase):
     def test_healthy_interval_ok(self):
@@ -146,13 +157,13 @@ class TestOutput(unittest.TestCase):
 
     def test_noproperty(self):
         t = Output("MyOutput", Value="myvalue")
-        d = json.loads(json.dumps(t, cls=awsencode))
+        d = t.to_dict()
         with self.assertRaises(KeyError):
             d['Properties']
 
     def test_empty_awsproperty_outputs_empty_object(self):
         t = FakeAWSProperty()
-        d = json.loads(json.dumps(t, cls=awsencode))
+        d = t.to_dict()
         self.assertEquals(len(d), 0)
 
 
@@ -160,7 +171,7 @@ class TestParameter(unittest.TestCase):
 
     def test_noproperty(self):
         t = Parameter("MyParameter", Type="String")
-        d = json.loads(json.dumps(t, cls=awsencode))
+        d = t.to_dict()
         with self.assertRaises(KeyError):
             d['Properties']
 
@@ -196,7 +207,7 @@ class TestProperty(unittest.TestCase):
             ToPort="22",
             CidrIp="0.0.0.0/0",
         )
-        d = json.loads(json.dumps(t, cls=awsencode))
+        d = t.to_dict()
         with self.assertRaises(KeyError):
             d['Properties']
 
@@ -237,7 +248,7 @@ class TestRef(unittest.TestCase):
     def test_ref(self):
         param = Parameter("param", Description="description", Type="String")
         t = Ref(param)
-        ref = json.loads(json.dumps(t, cls=awsencode))
+        ref = t.to_dict()
         self.assertEqual(ref['Ref'], 'param')
 
 
@@ -255,7 +266,7 @@ class TestSub(unittest.TestCase):
     def test_sub_with_vars(self):
         s = 'foo ${AWS::Region}'
         raw = Sub(s)
-        actual = json.loads(json.dumps(raw, cls=awsencode))
+        actual = raw.to_dict()
         expected = {'Fn::Sub': 'foo ${AWS::Region}'}
         self.assertEqual(expected, actual)
 
@@ -263,9 +274,50 @@ class TestSub(unittest.TestCase):
         s = 'foo ${AWS::Region} ${sub1} ${sub2}'
         values = {'sub1': 'uno', 'sub2': 'dos'}
         raw = Sub(s, **values)
-        actual = json.loads(json.dumps(raw, cls=awsencode))
+        actual = raw.to_dict()
         expected = {'Fn::Sub': ['foo ${AWS::Region} ${sub1} ${sub2}', values]}
         self.assertEqual(expected, actual)
+
+
+class TestSplit(unittest.TestCase):
+
+    def test_split(self):
+        delimiter = ','
+        source_string = ('{ "Fn::ImportValue": { "Fn::Sub": '
+                         '"${VpcStack}-PublicSubnets" }')
+        raw = Split(delimiter, source_string)
+        actual = raw.to_dict()
+        expected = (
+                {'Fn::Split': [',', '{ "Fn::ImportValue": { '
+                 '"Fn::Sub": "${VpcStack}-PublicSubnets" }']}
+        )
+        self.assertEqual(expected, actual)
+
+        with self.assertRaises(ValueError):
+            Join(10, "foobar")
+
+
+class TestJoin(unittest.TestCase):
+
+    def test_join(self):
+        delimiter = ','
+        source_string = (
+                '{ [ "arn:aws:lambda:",{ "Ref": "AWS::Region" },":",'
+                '{ "Ref": "AWS::AccountId" },'
+                '":function:cfnRedisEndpointLookup" ] }'
+        )
+        raw = Join(delimiter, source_string)
+        actual = raw.to_dict()
+        expected = (
+            {'Fn::Join': [',', '{ [ "arn:aws:lambda:",{ "Ref": '
+                          '"AWS::Region" },":",{ "Ref": "AWS::AccountId" },'
+                          '":function:cfnRedisEndpointLookup" ] }']}
+
+        )
+        self.assertEqual(expected, actual)
+
+        with self.assertRaises(ValueError):
+            Join(10, "foobar")
 
 
 if __name__ == '__main__':
