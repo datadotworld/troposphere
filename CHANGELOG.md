@@ -1,3 +1,43 @@
+## 1.9.3 (2017-04-13)
+- Fix pycodestyle by using an explicit exception type
+- Add more details to pycodestyle errors for travis runs
+- Fix validator function exception test
+- Remove limit check on conditions - Fixes #657
+- Allow valid value for TargetGroup HealthCheckPort (#659)
+- Added step functions and basic tests (#661)
+- Adding example for CloudTrail (from http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudtrail-trail.html) (#667)
+- Fix ApiGateway.py sample (#666)
+- Update comment on type checking
+- Added missing props to ec2.NetworkInterfaces (#669) (#670)
+- Add WAF Common Attacks Sample (#675)
+- Updated constants with new instance types (#674)
+- SSM Targets - fix spelling mistake (Value => Values) (#673)
+- Do json validation on ApiGateway::Model Schema (Fix #679) (#681)
+- SQS: Add FifoQueue and ContentBasedDeduplication (#687)
+- VPCPeeringConnection: add PeerOwnerId & PeerRoleArn (#688)
+- IAM: Add InstanceProfileName to InstanceProfile (#689)
+- Add ApiGateway UsagePlanKey resource
+- Add DeadLetterConfig property to Lambda::Function
+- Add new subproperties to route53 and redshift (#690)
+- Route53: ChildHealthChecks is a list of strings (#690)
+- Fix typo in S3_Bucket_With_Versioning_And_Lifecycle_Rules.py (#693)
+- Allow a dict to be passed in to initalize Tags (#692)
+- Add SSM::Parameter
+- Update autoscaling example to remove rebinding (#695)
+
+## 1.9.2 (2017-01-29)
+- Extra template validation (#635)
+- Update ECS to Jan 17, 2017 release (#642)
+- Add Timezone property to DBInstance (#643)
+- Test Python 3.6 (#644)
+- Adding RDS engine support for oracle-se2 (#646)
+- Correct required in ecs.Service (#645)
+- Add Separator property to IoT Firehose Action
+- Add Fn::Split function (#647)
+- Added to_dict() method to troposphere.Template (#651)
+- Allow use of AWSHelperFn for IOPS (#652)
+- Allow HelperFN w/ autoscaling policies (#654)
+
 ## 1.9.1 (2017-01-03)
 - Improve readability of AssumeRolePolicyDocument attribute (#591)
 - Add Environment to Lambda Function (#616)

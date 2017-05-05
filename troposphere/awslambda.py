@@ -1,4 +1,4 @@
-from . import AWSObject, AWSProperty, Join
+from . import AWSObject, AWSProperty, Join, Tags
 from .validators import positive_integer
 
 MEMORY_VALUES = [x for x in range(128, 1600, 64)]
@@ -110,6 +110,13 @@ class EventSourceMapping(AWSObject):
     }
 
 
+class DeadLetterConfig(AWSProperty):
+
+    props = {
+        'TargetArn': (basestring, False),
+    }
+
+
 class Environment(AWSProperty):
 
     props = {
@@ -123,6 +130,7 @@ class Function(AWSObject):
     props = {
         'Code': (Code, True),
         'Description': (basestring, False),
+        'DeadLetterConfig': (DeadLetterConfig, False),
         'Environment': (Environment, False),
         'FunctionName': (basestring, False),
         'Handler': (basestring, True),
@@ -130,6 +138,7 @@ class Function(AWSObject):
         'MemorySize': (validate_memory_size, False),
         'Role': (basestring, True),
         'Runtime': (basestring, True),
+        'Tags': (Tags, False),
         'Timeout': (positive_integer, False),
         'VpcConfig': (VPCConfig, False),
     }

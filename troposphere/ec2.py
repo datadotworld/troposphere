@@ -137,9 +137,6 @@ class Ipv6Addresses(AWSHelperFn):
             'Ipv6Addresses': address,
         }
 
-    def JSONrepr(self):
-        return self.data
-
 
 class PrivateIpAddressSpecification(AWSProperty):
     props = {
@@ -156,6 +153,8 @@ class NetworkInterfaceProperty(AWSProperty):
         'DeviceIndex': (integer, True),
         'GroupSet': ([basestring], False),
         'NetworkInterfaceId': (basestring, False),
+        'Ipv6AddressCount': (integer, False),
+        'Ipv6Addresses': ([Ipv6Addresses], False),
         'PrivateIpAddress': (basestring, False),
         'PrivateIpAddresses': ([PrivateIpAddressSpecification], False),
         'SecondaryPrivateIpAddressCount': (integer, False),
@@ -560,6 +559,8 @@ class VPCPeeringConnection(AWSObject):
         'PeerVpcId': (basestring, True),
         'VpcId': (basestring, True),
         'Tags': (list, False),
+        'PeerOwnerId': (basestring, False),
+        'PeerRoleArn': (basestring, False),
     }
 
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2013, Mark Peek <mark@peek.org>
+# Copyright (c) 2012-2017, Mark Peek <mark@peek.org>
 # All rights reserved.
 #
 # See LICENSE file for full license.
@@ -12,7 +12,7 @@ import types
 
 from . import validators
 
-__version__ = "1.9.1"
+__version__ = "1.9.3"
 
 # constants for DeletionPolicy
 Delete = 'Delete'
@@ -43,6 +43,29 @@ def is_aws_object_subclass(cls):
     except TypeError:
         pass
     return is_aws_object
+
+
+def encode_to_dict(obj):
+    if hasattr(obj, 'to_dict'):
+        # Calling encode_to_dict to ensure object is
+        # nomalized to a base dictionary all the way down.
+        return encode_to_dict(obj.to_dict())
+    elif isinstance(obj, (list, tuple)):
+        new_lst = []
+        for o in list(obj):
+            new_lst.append(encode_to_dict(o))
+        return new_lst
+    elif isinstance(obj, dict):
+        props = {}
+        for name, prop in obj.items():
+            props[name] = encode_to_dict(prop)
+
+        return props
+    # This is useful when dealing with external libs using
+    # this format. Specifically awacs.
+    elif hasattr(obj, 'JSONrepr'):
+        return encode_to_dict(obj.JSONrepr())
+    return obj
 
 
 class BaseAWSObject(object):
@@ -119,7 +142,7 @@ class BaseAWSObject(object):
             elif isinstance(expected_type, types.FunctionType):
                 try:
                     value = expected_type(value)
-                except:
+                except Exception:
                     sys.stderr.write(
                         "%s: %s.%s function validator '%s' threw "
                         "exception:\n" % (self.__class__,
@@ -145,8 +168,9 @@ class BaseAWSObject(object):
                 # Validated so assign it
                 return self.properties.__setitem__(name, value)
 
-            # Single type so check the type of the object and compare against
-            # what we were expecting. Special case AWS helper functions.
+            # Final validity check, compare the type of value against
+            # expected_type which should now be either a single type or
+            # a tuple of types.
             elif isinstance(value, expected_type):
                 return self.properties.__setitem__(name, value)
             else:
@@ -176,6 +200,21 @@ class BaseAWSObject(object):
 
     def validate(self):
         pass
+
+    def to_dict(self):
+        self._validate_props()
+        self.validate()
+
+        if self.properties:
+            return encode_to_dict(self.resource)
+        elif hasattr(self, 'resource_type'):
+            d = {}
+            for k, v in self.resource.items():
+                if k != 'Properties':
+                    d[k] = v
+            return d
+        else:
+            return {}
 
     @classmethod
     def _from_dict(cls, title=None, **kwargs):
@@ -220,7 +259,7 @@ class BaseAWSObject(object):
     def from_dict(cls, title, d):
         return cls._from_dict(title, **d)
 
-    def JSONrepr(self):
+    def _validate_props(self):
         for k, (_, required) in self.props.items():
             if required and k not in self.properties:
                 rtype = getattr(self, 'resource_type', "<unknown type>")
@@ -229,19 +268,6 @@ class BaseAWSObject(object):
                 if title:
                     msg += " (title: %s)" % title
                 raise ValueError(msg)
-
-        self.validate()
-        # Mainly used to not have an empty "Properties".
-        if self.properties:
-            return self.resource
-        elif hasattr(self, 'resource_type'):
-            d = {}
-            for k, v in self.resource.items():
-                if k != 'Properties':
-                    d[k] = v
-            return d
-        else:
-            return {}
 
 
 class AWSObject(BaseAWSObject):
@@ -284,6 +310,13 @@ class AWSAttribute(BaseAWSObject):
         super(AWSAttribute, self).__init__(title, **kwargs)
 
 
+def validate_delimiter(delimiter):
+    if not isinstance(delimiter, basestring):
+        raise ValueError(
+            "Delimiter must be a String, %s provided" % type(delimiter)
+        )
+
+
 def validate_pausetime(pausetime):
     if not pausetime.startswith('PT'):
         raise ValueError('PauseTime should look like PT#H#M#S')
@@ -305,155 +338,122 @@ class AWSHelperFn(object):
         else:
             return data
 
+    def to_dict(self):
+        return encode_to_dict(self.data)
+
 
 class GenericHelperFn(AWSHelperFn):
     """ Used as a fallback for the template generator """
     def __init__(self, data):
         self.data = self.getdata(data)
 
-    def JSONrepr(self):
-        return self.data
+    def to_dict(self):
+        return encode_to_dict(self.data)
 
 
 class Base64(AWSHelperFn):
     def __init__(self, data):
         self.data = {'Fn::Base64': data}
 
-    def JSONrepr(self):
-        return self.data
-
 
 class FindInMap(AWSHelperFn):
     def __init__(self, mapname, key, value):
         self.data = {'Fn::FindInMap': [self.getdata(mapname), key, value]}
-
-    def JSONrepr(self):
-        return self.data
 
 
 class GetAtt(AWSHelperFn):
     def __init__(self, logicalName, attrName):
         self.data = {'Fn::GetAtt': [self.getdata(logicalName), attrName]}
 
-    def JSONrepr(self):
-        return self.data
-
 
 class GetAZs(AWSHelperFn):
     def __init__(self, region=""):
         self.data = {'Fn::GetAZs': region}
-
-    def JSONrepr(self):
-        return self.data
 
 
 class If(AWSHelperFn):
     def __init__(self, cond, true, false):
         self.data = {'Fn::If': [self.getdata(cond), true, false]}
 
-    def JSONrepr(self):
-        return self.data
-
 
 class Equals(AWSHelperFn):
     def __init__(self, value_one, value_two):
         self.data = {'Fn::Equals': [value_one, value_two]}
-
-    def JSONrepr(self):
-        return self.data
 
 
 class And(AWSHelperFn):
     def __init__(self, cond_one, cond_two, *conds):
         self.data = {'Fn::And': [cond_one, cond_two] + list(conds)}
 
-    def JSONrepr(self):
-        return self.data
-
 
 class Or(AWSHelperFn):
     def __init__(self, cond_one, cond_two, *conds):
         self.data = {'Fn::Or': [cond_one, cond_two] + list(conds)}
-
-    def JSONrepr(self):
-        return self.data
 
 
 class Not(AWSHelperFn):
     def __init__(self, cond):
         self.data = {'Fn::Not': [self.getdata(cond)]}
 
-    def JSONrepr(self):
-        return self.data
-
 
 class Join(AWSHelperFn):
     def __init__(self, delimiter, values):
+        validate_delimiter(delimiter)
         self.data = {'Fn::Join': [delimiter, values]}
 
-    def JSONrepr(self):
-        return self.data
+
+class Split(AWSHelperFn):
+    def __init__(self, delimiter, values):
+        validate_delimiter(delimiter)
+        self.data = {'Fn::Split': [delimiter, values]}
 
 
 class Sub(AWSHelperFn):
     def __init__(self, input_str, **values):
         self.data = {'Fn::Sub': [input_str, values] if values else input_str}
 
-    def JSONrepr(self):
-        return self.data
-
 
 class Name(AWSHelperFn):
     def __init__(self, data):
         self.data = self.getdata(data)
-
-    def JSONrepr(self):
-        return self.data
 
 
 class Select(AWSHelperFn):
     def __init__(self, indx, objects):
         self.data = {'Fn::Select': [indx, objects]}
 
-    def JSONrepr(self):
-        return self.data
-
 
 class Ref(AWSHelperFn):
     def __init__(self, data):
         self.data = {'Ref': self.getdata(data)}
-
-    def JSONrepr(self):
-        return self.data
 
 
 class Condition(AWSHelperFn):
     def __init__(self, data):
         self.data = {'Condition': self.getdata(data)}
 
-    def JSONrepr(self):
-        return self.data
-
 
 class ImportValue(AWSHelperFn):
     def __init__(self, data):
         self.data = {'Fn::ImportValue': data}
 
-    def JSONrepr(self):
-        return self.data
-
-
-class awsencode(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, 'JSONrepr'):
-            return obj.JSONrepr()
-        return json.JSONEncoder.default(self, obj)
-
 
 class Tags(AWSHelperFn):
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        if not args:
+            # Assume kwargs variant
+            tag_dict = kwargs
+        else:
+            if len(args) != 1:
+                raise(TypeError, "Multiple non-kwargs passed to Tags")
+
+            # Validate single argument passed in is a dict
+            if not isinstance(args[0], dict):
+                raise(TypeError, "Tags needs to be either kwargs or dict")
+            tag_dict = args[0]
+
         self.tags = []
-        for k, v in sorted(kwargs.iteritems()):
+        for k, v in sorted(tag_dict.iteritems()):
             self.tags.append({
                 'Key': k,
                 'Value': v,
@@ -464,8 +464,8 @@ class Tags(AWSHelperFn):
         newtags.tags = self.tags + newtags.tags
         return newtags
 
-    def JSONrepr(self):
-        return self.tags
+    def to_dict(self):
+        return [encode_to_dict(tag) for tag in self.tags]
 
 
 class Template(object):
@@ -495,9 +495,6 @@ class Template(object):
         self.metadata = metadata
 
     def add_condition(self, name, condition):
-        if len(self.conditions) >= 60:
-            raise ValueError('Maximum of 60 conditions per template reached')
-
         self.conditions[name] = condition
 
     def handle_duplicate_key(self, key):
@@ -538,7 +535,7 @@ class Template(object):
         else:
             self.version = "2010-09-09"
 
-    def to_json(self, indent=4, sort_keys=True, separators=(',', ': ')):
+    def to_dict(self):
         t = {}
         if self.description:
             t['Description'] = self.description
@@ -556,11 +553,11 @@ class Template(object):
             t['AWSTemplateFormatVersion'] = self.version
         t['Resources'] = self.resources
 
-        return json.dumps(t, cls=awsencode, indent=indent,
-                          sort_keys=sort_keys, separators=separators)
+        return encode_to_dict(t)
 
-    def JSONrepr(self):
-        return [self.parameters, self.mappings, self.resources]
+    def to_json(self, indent=4, sort_keys=True, separators=(',', ': ')):
+        return json.dumps(self.to_dict(), indent=indent,
+                          sort_keys=sort_keys, separators=separators)
 
 
 class Export(AWSHelperFn):
@@ -568,9 +565,6 @@ class Export(AWSHelperFn):
         self.data = {
             'Name': name,
         }
-
-    def JSONrepr(self):
-        return self.data
 
 
 class Output(AWSDeclaration):
