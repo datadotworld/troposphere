@@ -119,7 +119,7 @@ class AutoScalingGroup(AWSObject):
         'MinSize': (integer, True),
         'NotificationConfigurations': ([NotificationConfigurations], False),
         'PlacementGroup': (basestring, False),
-        'Tags': (list, False),
+        'Tags': ((Tags, list), False),
         'TargetGroupARNs': ([basestring], False),
         'TerminationPolicies': ([basestring], False),
         'VPCZoneIdentifier': (list, False),
@@ -206,11 +206,46 @@ class StepAdjustments(AWSProperty):
     }
 
 
+class MetricDimension(AWSProperty):
+    props = {
+        'Name': (basestring, True),
+        'Value': (basestring, True),
+    }
+
+
+class CustomizedMetricSpecification(AWSProperty):
+    props = {
+        'Dimensions': ([MetricDimension], False),
+        'MetricName': (basestring, True),
+        'Namespace': (basestring, True),
+        'Statistic': (basestring, True),
+        'Unit': (basestring, False),
+    }
+
+
+class PredefinedMetricSpecification(AWSProperty):
+    props = {
+        'PredefinedMetricType': (basestring, True),
+        'ResourceLabel': (basestring, False),
+    }
+
+
+class TargetTrackingConfiguration(AWSProperty):
+    props = {
+        'CustomizedMetricSpecification':
+            (CustomizedMetricSpecification, False),
+        'DisableScaleIn': (boolean, False),
+        'PredefinedMetricSpecification':
+            (PredefinedMetricSpecification, False),
+        'TargetValue': (float, True),
+    }
+
+
 class ScalingPolicy(AWSObject):
     resource_type = "AWS::AutoScaling::ScalingPolicy"
 
     props = {
-        'AdjustmentType': (basestring, True),
+        'AdjustmentType': (basestring, False),
         'AutoScalingGroupName': (basestring, True),
         'Cooldown': (integer, False),
         'EstimatedInstanceWarmup': (integer, False),
@@ -219,6 +254,7 @@ class ScalingPolicy(AWSObject):
         'PolicyType': (basestring, False),
         'ScalingAdjustment': (integer, False),
         'StepAdjustments': ([StepAdjustments], False),
+        'TargetTrackingConfiguration': (TargetTrackingConfiguration, False),
     }
 
 
@@ -246,8 +282,8 @@ class LifecycleHook(AWSObject):
         'LifecycleHookName': (basestring, False),
         'LifecycleTransition': (basestring, True),
         'NotificationMetadata': (basestring, False),
-        'NotificationTargetARN': (basestring, True),
-        'RoleARN': (basestring, True),
+        'NotificationTargetARN': (basestring, False),
+        'RoleARN': (basestring, False),
     }
 
 

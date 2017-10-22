@@ -1,5 +1,5 @@
 from . import AWSObject, AWSProperty
-from .validators import boolean, network_port, positive_integer
+from .validators import boolean, integer, network_port, positive_integer
 
 
 class Cluster(AWSObject):
@@ -118,9 +118,9 @@ class LogConfiguration(AWSProperty):
 
 class Ulimit(AWSProperty):
     props = {
-        'HardLimit': (positive_integer, True),
+        'HardLimit': (integer, True),
         'Name': (basestring, False),
-        'SoftLimit': (positive_integer, True),
+        'SoftLimit': (integer, True),
     }
 
 
@@ -175,6 +175,7 @@ class TaskDefinition(AWSObject):
         'ContainerDefinitions': ([ContainerDefinition], True),
         'Family': (basestring, False),
         'NetworkMode': (basestring, False),
+        'PlacementConstraints': ([PlacementConstraint], False),
         'TaskRoleArn': (basestring, False),
         'Volumes': ([Volume], False),
     }

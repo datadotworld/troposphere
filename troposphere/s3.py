@@ -4,8 +4,9 @@
 # See LICENSE file for full license.
 import warnings
 
-from . import AWSObject, AWSProperty, Tags
+from . import AWSHelperFn, AWSObject, AWSProperty, Tags
 from .validators import positive_integer, s3_bucket_name
+from .validators import s3_transfer_acceleration_status
 
 try:
     from awacs.aws import Policy
@@ -43,6 +44,12 @@ class CorsConfiguration(AWSProperty):
 class VersioningConfiguration(AWSProperty):
     props = {
         'Status': (basestring, False),
+    }
+
+
+class AccelerateConfiguration(AWSProperty):
+    props = {
+        'AccelerationStatus': (s3_transfer_acceleration_status, True),
     }
 
 
@@ -94,6 +101,12 @@ class LifecycleRuleTransition(AWSProperty):
     }
 
 
+class AbortIncompleteMultipartUpload(AWSProperty):
+    props = {
+        'DaysAfterInitiation': (positive_integer, True),
+    }
+
+
 class NoncurrentVersionTransition(AWSProperty):
     props = {
         'StorageClass': (basestring, True),
@@ -101,8 +114,17 @@ class NoncurrentVersionTransition(AWSProperty):
     }
 
 
+class TagFilter(AWSProperty):
+    props = {
+        'Key': (basestring, True),
+        'Value': (basestring, True),
+    }
+
+
 class LifecycleRule(AWSProperty):
     props = {
+        'AbortIncompleteMultipartUpload':
+            (AbortIncompleteMultipartUpload, False),
         'ExpirationDate': (basestring, False),
         'ExpirationInDays': (positive_integer, False),
         'Id': (basestring, False),
@@ -111,6 +133,7 @@ class LifecycleRule(AWSProperty):
         'NoncurrentVersionTransitions': ([NoncurrentVersionTransition], False),
         'Prefix': (basestring, False),
         'Status': (basestring, True),
+        'TagFilters': ([TagFilter], False),
         'Transition': (LifecycleRuleTransition, False),
         'Transitions': ([LifecycleRuleTransition], False)
     }
@@ -209,6 +232,14 @@ class TopicConfigurations(AWSProperty):
     }
 
 
+class MetricsConfiguration(AWSProperty):
+    props = {
+        'Id': (basestring, True),
+        'Prefix': (basestring, False),
+        'TagFilters': ([TagFilter], False),
+    }
+
+
 class NotificationConfiguration(AWSProperty):
     props = {
         'LambdaConfigurations': ([LambdaConfigurations], False),
@@ -245,10 +276,12 @@ class Bucket(AWSObject):
 
     props = {
         'AccessControl': (basestring, False),
+        'AccelerateConfiguration': (AccelerateConfiguration, False),
         'BucketName': (s3_bucket_name, False),
         'CorsConfiguration': (CorsConfiguration, False),
         'LifecycleConfiguration': (LifecycleConfiguration, False),
         'LoggingConfiguration': (LoggingConfiguration, False),
+        'MetricsConfigurations': ([MetricsConfiguration], False),
         'NotificationConfiguration': (NotificationConfiguration, False),
         'ReplicationConfiguration': (ReplicationConfiguration, False),
         'Tags': (Tags, False),
@@ -266,19 +299,11 @@ class Bucket(AWSObject):
         LogDeliveryWrite,
     ]
 
-    def __init__(self, name=None, **kwargs):
-
-        # note: 'name' is the resource title, not the bucket name
-
-        if not name and 'title' in kwargs:
-            name = kwargs.pop('title')
-        if not name:
-            raise TypeError("You must provide a title for the bucket resource")
-        super(Bucket, self).__init__(name, **kwargs)
-
-        if 'AccessControl' in kwargs and \
-                isinstance(kwargs['AccessControl'], basestring):
-            if kwargs['AccessControl'] not in self.access_control_types:
+    def validate(self):
+        access_control = self.properties.get('AccessControl')
+        if access_control is not None and \
+                not isinstance(access_control, AWSHelperFn):
+            if access_control not in self.access_control_types:
                 raise ValueError('AccessControl must be one of "%s"' % (
                     ', '.join(self.access_control_types)))
 

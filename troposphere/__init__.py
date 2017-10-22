@@ -12,7 +12,7 @@ import types
 
 from . import validators
 
-__version__ = "1.9.3"
+__version__ = "2.0.1"
 
 # constants for DeletionPolicy
 Delete = 'Delete'
@@ -23,11 +23,15 @@ Snapshot = 'Snapshot'
 AWS_ACCOUNT_ID = 'AWS::AccountId'
 AWS_NOTIFICATION_ARNS = 'AWS::NotificationARNs'
 AWS_NO_VALUE = 'AWS::NoValue'
+AWS_PARTITION = 'AWS::Partition'
 AWS_REGION = 'AWS::Region'
 AWS_STACK_ID = 'AWS::StackId'
 AWS_STACK_NAME = 'AWS::StackName'
+AWS_URL_SUFFIX = 'AWS::URLSuffix'
 
 # Template Limits
+MAX_MAPPINGS = 100
+MAX_OUTPUTS = 60
 MAX_PARAMETERS = 60
 MAX_RESOURCES = 200
 PARAMETER_TITLE_MAX = 255
@@ -68,10 +72,23 @@ def encode_to_dict(obj):
     return obj
 
 
+def depends_on_helper(obj):
+    """ Handles using .title if the given object is a troposphere resource.
+
+    If the given object is a troposphere resource, use the `.title` attribute
+    of that resource. If it's a string, just use the string. This should allow
+    more pythonic use of DependsOn.
+    """
+    if isinstance(obj, AWSObject):
+        return obj.title
+    return obj
+
+
 class BaseAWSObject(object):
-    def __init__(self, title, template=None, **kwargs):
+    def __init__(self, title, template=None, validation=True, **kwargs):
         self.title = title
         self.template = template
+        self.do_validation = validation
         # Cache the keys for validity checks
         self.propnames = self.props.keys()
         self.attributes = ['DependsOn', 'DeletionPolicy',
@@ -111,7 +128,10 @@ class BaseAWSObject(object):
 
     def __getattr__(self, name):
         try:
-            return self.properties.__getitem__(name)
+            if name in self.attributes:
+                return self.resource[name]
+            else:
+                return self.properties.__getitem__(name)
         except KeyError:
             # Fall back to the name attribute in the object rather than
             # in the properties dict. This is for non-OpenStack backwards
@@ -125,7 +145,10 @@ class BaseAWSObject(object):
                 or '_BaseAWSObject__initialized' not in self.__dict__:
             return dict.__setattr__(self, name, value)
         elif name in self.attributes:
-            self.resource[name] = value
+            if name == "DependsOn":
+                self.resource[name] = depends_on_helper(value)
+            else:
+                self.resource[name] = value
             return None
         elif name in self.propnames:
             # Check the type of the object and compare against what we were
@@ -201,9 +224,14 @@ class BaseAWSObject(object):
     def validate(self):
         pass
 
+    def no_validation(self):
+        self.do_validation = False
+        return self
+
     def to_dict(self):
-        self._validate_props()
-        self.validate()
+        if self.do_validation:
+            self._validate_props()
+            self.validate()
 
         if self.properties:
             return encode_to_dict(self.resource)
@@ -272,6 +300,16 @@ class BaseAWSObject(object):
 
 class AWSObject(BaseAWSObject):
     dictname = 'Properties'
+
+    def ref(self):
+        return Ref(self)
+
+    Ref = ref
+
+    def get_att(self, value):
+        return GetAtt(self, value)
+
+    GetAtt = get_att
 
 
 class AWSDeclaration(BaseAWSObject):
@@ -362,7 +400,7 @@ class FindInMap(AWSHelperFn):
 
 
 class GetAtt(AWSHelperFn):
-    def __init__(self, logicalName, attrName):
+    def __init__(self, logicalName, attrName):  # noqa: N803
         self.data = {'Fn::GetAtt': [self.getdata(logicalName), attrName]}
 
 
@@ -428,6 +466,15 @@ class Ref(AWSHelperFn):
         self.data = {'Ref': self.getdata(data)}
 
 
+# Pseudo Parameter Ref's
+AccountId = Ref(AWS_ACCOUNT_ID)
+NotificationARNs = Ref(AWS_NOTIFICATION_ARNS)
+NoValue = Ref(AWS_NO_VALUE)
+Region = Ref(AWS_REGION)
+StackId = Ref(AWS_STACK_ID)
+StackName = Ref(AWS_STACK_NAME)
+
+
 class Condition(AWSHelperFn):
     def __init__(self, data):
         self.data = {'Condition': self.getdata(data)}
@@ -471,6 +518,7 @@ class Tags(AWSHelperFn):
 class Template(object):
     props = {
         'AWSTemplateFormatVersion': (basestring, False),
+        'Transform': (basestring, False),
         'Description': (basestring, False),
         'Parameters': (dict, False),
         'Mappings': (dict, False),
@@ -478,7 +526,7 @@ class Template(object):
         'Outputs': (dict, False),
     }
 
-    def __init__(self, Description=None, Metadata=None):
+    def __init__(self, Description=None, Metadata=None):  # noqa: N803
         self.description = Description
         self.metadata = {} if Metadata is None else Metadata
         self.conditions = {}
@@ -487,6 +535,7 @@ class Template(object):
         self.parameters = {}
         self.resources = {}
         self.version = None
+        self.transform = None
 
     def add_description(self, description):
         self.description = description
@@ -513,9 +562,13 @@ class Template(object):
         return values
 
     def add_output(self, output):
+        if len(self.outputs) >= MAX_OUTPUTS:
+            raise ValueError('Maximum outputs %d reached' % MAX_OUTPUTS)
         return self._update(self.outputs, output)
 
     def add_mapping(self, name, mapping):
+        if len(self.mappings) >= MAX_MAPPINGS:
+            raise ValueError('Maximum mappings %d reached' % MAX_MAPPINGS)
         self.mappings[name] = mapping
 
     def add_parameter(self, parameter):
@@ -535,6 +588,9 @@ class Template(object):
         else:
             self.version = "2010-09-09"
 
+    def add_transform(self, transform):
+        self.transform = transform
+
     def to_dict(self):
         t = {}
         if self.description:
@@ -551,6 +607,8 @@ class Template(object):
             t['Parameters'] = self.parameters
         if self.version:
             t['AWSTemplateFormatVersion'] = self.version
+        if self.transform:
+            t['Transform'] = self.transform
         t['Resources'] = self.resources
 
         return encode_to_dict(t)
@@ -580,7 +638,7 @@ class Parameter(AWSDeclaration):
     NUMBER_PROPERTIES = ['MaxValue', 'MinValue']
     props = {
         'Type': (basestring, True),
-        'Default': (basestring, False),
+        'Default': ((basestring, int, float), False),
         'NoEcho': (bool, False),
         'AllowedValues': (list, False),
         'AllowedPattern': (basestring, False),
@@ -599,6 +657,44 @@ class Parameter(AWSDeclaration):
         super(Parameter, self).validate_title()
 
     def validate(self):
+        def check_type(t, v):
+            try:
+                t(v)
+                return True
+            except ValueError:
+                return False
+
+        # Validate the Default parameter value
+        default = self.properties.get('Default')
+        if default:
+            error_str = ("Parameter default type mismatch: expecting "
+                         "type %s got %s with value %r")
+            # Get the Type specified and see whether the default type
+            # matches (in the case of a String Type) or can be coerced
+            # into one of the number formats.
+            param_type = self.properties.get('Type')
+            if param_type == 'String' and not isinstance(default, basestring):
+                raise ValueError(error_str %
+                                 ('String', type(default), default))
+            elif param_type == 'Number':
+                allowed = [float, int]
+                # See if the default value can be coerced into one
+                # of the correct types
+                if not any(map(lambda x: check_type(x, default), allowed)):
+                    raise ValueError(error_str %
+                                     (param_type, type(default), default))
+            elif param_type == 'List<Number>':
+                if not isinstance(default, basestring):
+                    raise ValueError(error_str %
+                                     (param_type, type(default), default))
+                allowed = [float, int]
+                dlist = default.split(",")
+                for d in dlist:
+                    # Verify the split array are all numbers
+                    if not any(map(lambda x: check_type(x, d), allowed)):
+                        raise ValueError(error_str %
+                                         (param_type, type(d), dlist))
+
         if self.properties['Type'] != 'String':
             for p in self.STRING_PROPERTIES:
                 if p in self.properties:

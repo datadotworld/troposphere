@@ -2,6 +2,8 @@
 # All rights reserved.
 #
 # See LICENSE file for full license.
+
+import json
 from re import compile
 
 
@@ -38,6 +40,36 @@ def integer_range(minimum_val, maximum_val):
         return x
 
     return integer_range_checker
+
+
+def integer_list_item(allowed_values):
+    def integer_list_item_checker(x):
+        i = positive_integer(x)
+        if i in allowed_values:
+            return x
+        raise ValueError('Integer must be one of following: %s' %
+                         ', '.join(str(j) for j in allowed_values))
+
+    return integer_list_item_checker
+
+
+def floatingpoint(x):
+    try:
+        float(x)
+    except (ValueError, TypeError):
+        raise ValueError("%r is not a valid float" % x)
+    else:
+        return x
+
+
+def ignore(x):
+    """Method to indicate bypassing property validation"""
+    return x
+
+
+def defer(x):
+    """Method to indicate defering property validation"""
+    return x
 
 
 def network_port(x):
@@ -99,6 +131,17 @@ def status(status):
     if status not in valid_statuses:
         raise ValueError('Status needs to be one of %r' % valid_statuses)
     return status
+
+
+def s3_transfer_acceleration_status(value):
+    valid_status = ['Enabled', 'Suspended']
+    if value not in valid_status:
+        raise ValueError(
+            'AccelerationStatus must be one of: "%s"' % (
+                ', '.join(valid_status)
+            )
+        )
+    return value
 
 
 def iam_names(b):
@@ -172,3 +215,77 @@ def exactly_one(class_name, properties, conditionals):
                           ' must be specified: %s') % (
                           class_name, ', '.join(conditionals)))
     return specified_count
+
+
+def json_checker(name, prop):
+    from . import AWSHelperFn
+
+    if isinstance(prop, basestring):
+        # Verify it is a valid json string
+        json.loads(prop)
+        return prop
+    elif isinstance(prop, dict):
+        # Convert the dict to a basestring
+        return json.dumps(prop)
+    elif isinstance(prop, AWSHelperFn):
+        return prop
+    else:
+        raise ValueError("%s must be a str or dict" % name)
+
+
+def notification_type(notification):
+    valid_notifications = ['Command', 'Invocation']
+    if notification not in valid_notifications:
+        raise ValueError(
+            'NotificationType must be one of: "%s"' % (
+                ', '.join(valid_notifications)
+            )
+        )
+    return notification
+
+
+def notification_event(events):
+    valid_events = ['All', 'InProgress', 'Success', 'TimedOut', 'Cancelled',
+                    'Failed']
+    for event in events:
+        if event not in valid_events:
+            raise ValueError(
+                'NotificationEvents must be at least one of: "%s"' % (
+                    ', '.join(valid_events)
+                )
+            )
+    return events
+
+
+def task_type(task):
+    valid_tasks = ['RUN_COMMAND', 'AUTOMATION', 'LAMBDA', 'STEP_FUNCTION']
+    if task not in valid_tasks:
+        raise ValueError(
+            'TaskType must be one of: "%s"' % (
+                ', '.join(valid_tasks)
+            )
+        )
+    return task
+
+
+def compliance_level(level):
+    valid_levels = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFORMATIONAL',
+                    'UNSPECIFIED']
+    if level not in valid_levels:
+        raise ValueError(
+            'ApprovedPatchesComplianceLevel must be one of: "%s"' % (
+                ', '.join(valid_levels)
+            )
+        )
+    return level
+
+
+def operating_system(os):
+    valid_os = ['WINDOWS', 'AMAZON_LINUX', 'UBUNTU', 'REDHAT_ENTERPRISE_LINUX']
+    if os not in valid_os:
+        raise ValueError(
+            'OperatingSystem must be one of: "%s"' % (
+                ', '.join(valid_os)
+            )
+        )
+    return os

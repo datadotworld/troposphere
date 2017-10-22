@@ -1,3 +1,139 @@
+## 2.0.1 (2017-10-21)
+- Allow s3.Bucket AccessControl to be an AWSHelperFn
+- Add AWS::ElasticLoadBalancingV2::ListenerCertificate
+- Add serverless FunctionName and change how Tags are implemented
+- Make AdjustmentType an optional property of ScalingPolicy as it is not used/supported for target (#849)
+- Add maintenance window for SSM (#851)
+- Add Tags, Tracing, KmsKeyArn, DLQ to serverless(SAM) (#853)
+- Add new AWS::SSM resources (#854)
+- EC2 NoDevice should be type boolean not dict (#858)
+- Fixes RecordColumns cardinality for InputSchema and ReferenceSchema (#859)
+- Make AWS::Batch::JobQueue::JobQueueName optional (#860)
+- Fixes ApplicationOutput/Output cardinality (#863)
+
+## 2.0.0 (2017-10-07)
+- Note: the s3.Bucket change (#844) *may* cause a breaking change for non-named arguments.
+- Add DefinitionBody to serverless API (#822)
+- Adding kinesis stream source to firehose (#823)
+- Add `Event::Rule::Target::EcsParameters` (#824)
+- Add S3 Transfer Acceleration to AWS::S3::Bucket (#833)
+- Add AvailabilityZone property to TargetDescription (#834)
+- Add Tags to NATGateway (#835)
+- Add ResourceLifecycleConfig to ElasticBeanstalk (#836)
+- Add AWS::Athena::NamedQuery (#837)
+- Added platformArn to Environment and ConfigurationTemplate (#839)
+- Events target (fixes #830) (#840)
+- Refactor s3.Bucket to remove custom __init__() and add tests (#844)
+- Be more explicit on the use of the Tags object for Tags (#845)
+
+## 1.9.6 (2017-09-24)
+- Added missing EU_WEST_2 constants. (#776)
+- Override object validation (#780)
+- Update PyPI Information (#785)
+- Adding IPv6 changes to AWS::EC2::Subnet (#786)
+- NetworkACL Protocl Constants (#787)
+- Add support for EFS encryption (#789)
+- Add AWS::ApiGateway::GatewayResponse (#790)
+- Add support for aurora-postgresql as a valid DB engine (#791)
+- adding sqs server side encryption (#793)
+- Support new code deploy options (#794)
+- Add AWS Batch Support (#796)
+- VPC expansion support (#797)
+- Add NLB Functionality (#806)
+- Fix typos in examples/DynamoDB_Table.py (#807)
+- Revert "Accept Join type as parameter default value as it returns a string (#752)" (#808)
+- Change Cognito UserPool SchemaAttribute required value to boolean (#809)
+- Updating case of 'AssignIPv6AddressOnCreation' (#810)
+- Fix spelling error  to  in RedshiftVPC example (#811)
+- EFS example: SecurityGroupRule can't be referred to as a Ref (#813)
+- Update README.rst with current supported resources (#814)
+- Add CloudTrail EventSelectors (#815)
+- Add DAX support (#818)
+- Add KinesisAnalytics support (#819)
+- Add new ApiGateway resources (#820)
+- Add autoscaling example for http requests that closes #630 (#821)
+- Add new S3 Lifecycle Rule properties
+- Add IoT DynamoDBv2Action and update DynamoDBAction properties
+- Add EventSourceToken to Lambda::Permission
+- Add new pseudo parameters
+- Add DocumentationVersion to AWS::ApiGateway::Stage
+- Add S3 Bucket MetricsConfiguration and fix TagFilter spelling
+- Add TargetType to ELBv2::TargetGroup
+- Add TargetTrackingConfiguration to AutoScaling::ScalingPolicy
+- Add ReplaceUnhealthyInstances and Type to SpotFleetRequestConfigData
+- Add ExtendedS3DestinationConfiguration to firehose DeliveryStream
+- Add AWS::EC2::NetworkInterfacePermission
+
+## 1.9.5 (2017-07-26)
+- Add support for latest Cloudwatch alarms properties (#694)
+- Raise ValueError for Outputs and Mappings - Fix Issue #732 (#733)
+- Add AWS::EMR::SecurityConfiguration support (#738)
+- Create CODE_OF_CONDUCT.md (#740)
+- Added UsagePlans to API Gateway example (#741)
+- EMR AutoScaling Complex Validation and Introduction of an ignore validator type (#743)
+- Add PrivilegedMode option to CodeBuild Environments (#744)
+- EFS DependsOn Ref to object fix (#746)
+- README - add syntax highlighting (#747)
+- Make handling of DependsOn more pythonic (#748)
+- Accept Join type as parameter default value as it returns a string (#752)
+- AWS SAM support (#754)
+- Fixed UsagePlan example to proper Ref (#755)
+- Fix cognito StringAttributeConstraints property names (Fixes #756)
+- Add 'SourceAuth' property to CodeBuild Source (#758)
+- Make it easier to get at hidden attributes (Fixes #760)
+- Size/IOPS should be positive_integers (#761)
+- Check that FIFO Queues end with .fifo (#757)
+- Add AWS::CloudWatch::Dashboard (Fixes #763)
+- Ulimit's HardLimit and SoftLimit validator change (#764)
+- Adding EgressOnlyInternetGateway to EC2::Route (#765)
+- Allow passing in a dict into DashboardBody (#767)
+- Handle SQS QueueName using an AWSHelperFn (Fixes #773)
+- LifecycleHook NotificationTargetARN and RoleARN are now optional
+- Remove RoleArn from Events::Rule and add to Target property
+- Add TracingConfig property to AWS::Lambda::Function
+- Add Tags to some RedShift resources
+- Add AWS::ApiGateway::DomainName
+- Add AWS::EC2::EgressOnlyInternetGateway
+- Add AWS::EMR::InstanceFleetConfig
+- Add BinaryMediaTypes to ApiGateway::RestApi
+- Add TargetTrackingScalingPolicyConfiguration
+- Add TrailName to CloudTrail::Trail
+- Add AlarmConfiguration and TriggerConfigurations
+- Add Tags and TimeToLiveSpecification to DynamoDB::Table
+- Add RetentionPeriodHours to Kinesis::Stream
+- Add ReplicationSourceIdentifier to RDS::DBCluster
+- Add LoggingProperties to Redshift::Cluster
+- Add AWS Database Migration Service (DMS) support
+- Add test target to Makefile
+- Make it easier to download the latest CF resource spec
+- Added and reverted out of this release:
+  - Fix pycodestyle issue in tests/test_yaml.py
+  - Output yaml (to_yaml) using cfn_flip (Fixes #567)
+  - Special case If during parameter checking (Fixes #772)
+  - Raise TypeError when a scaler AWSHelperFn is used in a list context (#751)
+
+## 1.9.4 (2017-06-04)
+- Fix typo in S3_Bucket.py example (#696)
+- Added .Ref & .GetAtt helper methods (#697)
+- Add Pseudo Parameter Ref objects (#698)
+- Fix NamespaceType typo in codebuild::Artifacts() (fixes #701)
+- Add IpAddressType property to elbv2. (#703)
+- Add new AWS::Lambda::Function Tags support (#705)
+- Added ECS PlacementConstraints, PlacementStrategy, and ServiceName (#706)
+- Add missing CidrIpv6 property to securityrule. (#710)
+- Add missing properties to various objects in ec2.py (#711)
+- logs.LogGroup#RetentionInDays is strictly defined list (#712)
+- Add ManagedPolicyName to AWS::IAM::ManagedPolicy (Fixes #714)
+- Add better validations for Parameter Default types (Fixes #717)
+- Add AWS::Cognito (fixes #720)
+- Add required attribute, JobFlowId, to EMR::InstanceGroupConfig (#722)
+- Add WAFRegional support (#723)
+- fix for ElastiCacheRedis.py example to use awacs (#725)
+- Add EMR autoscaling (#729)
+- Add SshUsername to AWS::OpsWorks::UserProfile
+- Add PlacementConstraints to AWS::ECS::TaskDefinition
+- Add MaximumExecutionFrequency to Config SourceDetails
+
 ## 1.9.3 (2017-04-13)
 - Fix pycodestyle by using an explicit exception type
 - Add more details to pycodestyle errors for travis runs

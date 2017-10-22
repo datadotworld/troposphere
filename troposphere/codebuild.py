@@ -4,14 +4,30 @@
 # See LICENSE file for full license.
 
 from . import AWSObject, AWSProperty, Tags
-from .validators import integer
+from .validators import integer, boolean
+
+
+class SourceAuth(AWSProperty):
+    props = {
+        'Resource': (basestring, False),
+        'Type': (basestring, False),
+    }
+
+    def validate(self):
+        valid_types = [
+            'OAUTH'
+        ]
+        auth_types = self.properties.get('Type')
+        if auth_types not in valid_types:
+            raise ValueError('SourceAuth Type: must be one of %s' %
+                             ','.join(valid_types))
 
 
 class Artifacts(AWSProperty):
     props = {
         'Location': (basestring, False),
         'Name': (basestring, False),
-        'NameSpaceType': (basestring, False),
+        'NamespaceType': (basestring, False),
         'Packaging': (basestring, False),
         'Path': (basestring, False),
         'Type': (basestring, True),
@@ -49,6 +65,7 @@ class Environment(AWSProperty):
         'ComputeType': (basestring, True),
         'EnvironmentVariables': ((list, [EnvironmentVariable]), False),
         'Image': (basestring, True),
+        'PrivilegedMode': (boolean, False),
         'Type': (basestring, True),
     }
 
@@ -64,6 +81,7 @@ class Environment(AWSProperty):
 
 class Source(AWSProperty):
     props = {
+        'Auth': (SourceAuth, False),
         'BuildSpec': (basestring, False),
         'Location': (basestring, False),
         'Type': (basestring, True),
@@ -88,6 +106,11 @@ class Source(AWSProperty):
                 'Source Location: must be defined when type is %s' %
                 source_type
                 )
+
+        auth = self.properties.get('Auth')
+        if auth is not None and source_type is not 'GITHUB':
+            raise ValueError("SourceAuth: must only be defined when using "
+                             "'GITHUB' Source Type.")
 
 
 class Project(AWSObject):

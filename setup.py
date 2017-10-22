@@ -1,9 +1,16 @@
 from setuptools import setup
 
+
+def readme():
+    with open('README.rst') as f:
+        return f.read()
+
+
 setup(
     name='troposphere',
-    version='1.9.3',
+    version='2.0.1',
     description="AWS CloudFormation creation library",
+    long_description=readme(),
     author="Mark Peek",
     author_email="mark@peek.org",
     url="https://github.com/cloudtools/troposphere",
