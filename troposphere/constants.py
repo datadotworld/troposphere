@@ -7,6 +7,7 @@ AP_NORTHEAST_2 = 'ap-northeast-2'
 AP_SOUTHEAST_1 = 'ap-southeast-1'
 AP_SOUTHEAST_2 = 'ap-southeast-2'
 EU_WEST_1 = 'eu-west-1'
+EU_WEST_2 = 'eu-west-2'
 EU_CENTRAL_1 = 'eu-central-1'
 SA_EAST_1 = 'sa-east-1'
 US_EAST_1 = 'us-east-1'
@@ -35,6 +36,9 @@ AP_SOUTHEAST_2C = 'ap-southeast-2c'
 EU_WEST_1A = 'eu-west-1a'
 EU_WEST_1B = 'eu-west-1b'
 EU_WEST_1C = 'eu-west-1c'
+
+EU_WEST_2A = 'eu-west-2a'
+EU_WEST_2B = 'eu-west-2b'
 
 EU_CENTRAL_1A = 'eu-central-1a'
 EU_CENTRAL_1B = 'eu-central-1b'
@@ -74,6 +78,11 @@ HTTPS_PORT = 443
 REDIS_PORT = 6379
 MEMCACHED_PORT = 11211
 POSTGRESQL_PORT = 5432
+
+TCP_PROTOCOL = 6
+UDP_PROTOCOL = 17
+ICMP_PROTOCOL = 1
+ALL_PROTOCOL = -1
 
 #
 # EC2 instance types
@@ -290,6 +299,12 @@ LIST_OF_SUBNET_IDS = 'List<AWS::EC2::Subnet::Id>'
 LIST_OF_VOLUME_IDS = 'List<AWS::EC2::Volume::Id>'
 LIST_OF_VPC_IDS = 'List<AWS::EC2::VPC::Id>'
 LIST_OF_HOSTED_ZONE_IDS = 'List<AWS::Route53::HostedZone::Id>'
+
+#
+# Logs
+#
+LOGS_ALLOWED_RETENTION_DAYS = [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180,
+                               365, 400, 545, 731, 1827, 3653]
 
 #
 # Route53

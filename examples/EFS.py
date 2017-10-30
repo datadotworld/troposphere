@@ -58,7 +58,7 @@ efs_security_group_rule = SecurityGroupRule(
 # Security group that's applied to the Mount Targets.
 efs_security_group = SecurityGroup(
     "SecurityGroup",
-    SecurityGroupIngress=[Ref(efs_security_group_rule)],
+    SecurityGroupIngress=[efs_security_group_rule],
     VpcId=Ref(vpcid_param),
     GroupDescription="Allow NFS over TCP"
 )
@@ -68,7 +68,7 @@ template.add_resource(efs_security_group)
 # mount targets. Give it some tags so we can identify it later.
 tags = Tags(Name='MyEFSFileSystem')
 efs_file_system = FileSystem(
-    title='MyEFSFileSystem',
+    "MyEFSFileSystem",
     FileSystemTags=tags
 )
 template.add_resource(efs_file_system)
@@ -77,7 +77,7 @@ template.add_resource(efs_file_system)
 # it's required, but for the purpose of this example we'll
 # put it in just one.
 efs_mount_target = MountTarget(
-    title='MyEFSMountTarget',
+    "MyEFSMountTarget",
     FileSystemId=Ref(efs_file_system),
     SecurityGroups=[Ref(efs_security_group)],
     SubnetId=Ref(subnetid_param)
@@ -118,7 +118,7 @@ ec2_instance = Instance(
     KeyName=Ref(keyname_param),
     SecurityGroups=[Ref(efs_host_security_group)],
     IamInstanceProfile=Ref(efs_host_instance_profile),
-    DependsOn=Ref(efs_mount_target)
+    DependsOn=efs_mount_target
 )
 template.add_resource(ec2_instance)
 

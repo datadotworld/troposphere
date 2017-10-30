@@ -1,7 +1,9 @@
 import unittest
 from troposphere import AWSObject, AWSProperty, Output, Parameter
-from troposphere import Join, Ref, Split, Sub, Template
-from troposphere.ec2 import Instance, SecurityGroupRule
+from troposphere import If, Join, Ref, Split, Sub, Template
+from troposphere import depends_on_helper
+from troposphere.ec2 import Instance, Route, SecurityGroupRule
+from troposphere.s3 import Bucket
 from troposphere.elasticloadbalancing import HealthCheck
 from troposphere.validators import positive_integer
 
@@ -40,6 +42,25 @@ class TestBasic(unittest.TestCase):
             t = Template()
             t.add_resource(Instance('ec2instance'))
             t.to_json()
+
+    def test_depends_on_helper_with_resource(self):
+        resource_name = "Bucket1"
+        b1 = Bucket(resource_name)
+        self.assertEqual(depends_on_helper(b1), resource_name)
+
+    def test_depends_on_helper_with_string(self):
+        resource_name = "Bucket1"
+        self.assertEqual(depends_on_helper(resource_name), resource_name)
+
+    def test_resource_depends_on(self):
+        b1 = Bucket("B1")
+        b2 = Bucket("B2", DependsOn=b1)
+        self.assertEqual(b1.title, b2.resource["DependsOn"])
+
+    def test_resource_depends_on_attr(self):
+        b1 = Bucket("B1")
+        b2 = Bucket("B2", DependsOn=b1)
+        self.assertEqual(b1.title, b2.DependsOn)
 
 
 def call_correct(x):
@@ -197,6 +218,49 @@ class TestParameter(unittest.TestCase):
         with self.assertRaises(ValueError):
             t.to_json()
 
+    def test_property_default(self):
+        p = Parameter("param", Type="String", Default="foo")
+        p.validate()
+
+        p = Parameter("param", Type="Number", Default=1)
+        p.validate()
+
+        p = Parameter("param", Type="Number", Default=1.0)
+        p.validate()
+
+        p = Parameter("param", Type="Number", Default=0.1)
+        p.validate()
+
+        p = Parameter("param", Type="List<Number>", Default="1, 2, 3")
+        p.validate()
+
+        p = Parameter("param", Type="List<Number>", Default=" 0.1 , 2 , 1.1 ")
+        p.validate()
+
+        with self.assertRaises(ValueError):
+            p = Parameter("param", Type="String", Default=1)
+            p.validate()
+
+        with self.assertRaises(ValueError):
+            p = Parameter("param", Type="Number", Default="foo")
+            p.validate()
+
+        with self.assertRaises(TypeError):
+            p = Parameter("param", Type="Number", Default=["foo"])
+            p.validate()
+
+        with self.assertRaises(ValueError):
+            p = Parameter("param", Type="List<Number>", Default="foo")
+            p.validate()
+
+        with self.assertRaises(ValueError):
+            p = Parameter("param", Type="List<Number>", Default="1, 2, foo")
+            p.validate()
+
+        with self.assertRaises(TypeError):
+            p = Parameter("param", Type="List<Number>", Default=["1", "2"])
+            p.validate()
+
 
 class TestProperty(unittest.TestCase):
 
@@ -318,6 +382,71 @@ class TestJoin(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             Join(10, "foobar")
+
+
+class TestValidation(unittest.TestCase):
+
+    def test_validation(self):
+        route = Route(
+            'Route66',
+            DestinationCidrBlock='0.0.0.0/0',
+            RouteTableId=Ref('RouteTable66'),
+            InstanceId=If(
+                'UseNat',
+                Ref('AWS::NoValue'),
+                Ref('UseNat')
+            ),
+            NatGatewayId=If(
+                'UseNat',
+                Ref('UseNat'),
+                Ref('AWS::NoValue')
+            )
+        )
+        t = Template()
+        t.add_resource(route)
+        with self.assertRaises(ValueError):
+            t.to_json()
+
+    def test_novalidation(self):
+        route = Route(
+            'Route66',
+            validation=False,
+            DestinationCidrBlock='0.0.0.0/0',
+            RouteTableId=Ref('RouteTable66'),
+            InstanceId=If(
+                'UseNat',
+                Ref('AWS::NoValue'),
+                Ref('UseNat')
+            ),
+            NatGatewayId=If(
+                'UseNat',
+                Ref('UseNat'),
+                Ref('AWS::NoValue')
+            )
+        )
+        t = Template()
+        t.add_resource(route)
+        t.to_json()
+
+    def test_no_validation_method(self):
+        route = Route(
+            'Route66',
+            DestinationCidrBlock='0.0.0.0/0',
+            RouteTableId=Ref('RouteTable66'),
+            InstanceId=If(
+                'UseNat',
+                Ref('AWS::NoValue'),
+                Ref('UseNat')
+            ),
+            NatGatewayId=If(
+                'UseNat',
+                Ref('UseNat'),
+                Ref('AWS::NoValue')
+            )
+        ).no_validation()
+        t = Template()
+        t.add_resource(route)
+        t.to_json()
 
 
 if __name__ == '__main__':
