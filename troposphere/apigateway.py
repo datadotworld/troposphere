@@ -1,6 +1,5 @@
-from . import AWSHelperFn, AWSObject, AWSProperty
-from .validators import positive_integer
-import json
+from . import AWSObject, AWSProperty
+from .validators import boolean, json_checker, positive_integer
 
 
 def validate_authorizer_ttl(ttl_value):
@@ -124,6 +123,45 @@ class Deployment(AWSObject):
     }
 
 
+class Location(AWSProperty):
+    props = {
+        "Method": (basestring, False),
+        "Name": (basestring, False),
+        "Path": (basestring, False),
+        "StatusCode": (basestring, False),
+        "Type": (basestring, False),
+    }
+
+
+class DocumentationPart(AWSObject):
+    resource_type = "AWS::ApiGateway::DocumentationPart"
+
+    props = {
+        "Location": (Location, True),
+        "Properties": (basestring, True),
+        "RestApiId": (basestring, True),
+    }
+
+
+class DocumentationVersion(AWSObject):
+    resource_type = "AWS::ApiGateway::DocumentationVersion"
+
+    props = {
+        "Description": (basestring, False),
+        "DocumentationVersion": (basestring, True),
+        "RestApiId": (basestring, True),
+    }
+
+
+class DomainName(AWSObject):
+    resource_type = "AWS::ApiGateway::DomainName"
+
+    props = {
+        "CertificateArn": (basestring, True),
+        "DomainName": (basestring, True),
+    }
+
+
 class IntegrationResponse(AWSProperty):
 
     props = {
@@ -188,18 +226,21 @@ class Model(AWSObject):
     }
 
     def validate(self):
-        if 'Schema' in self.properties:
-            schema = self.properties.get('Schema')
-            if isinstance(schema, basestring):
-                # Verify it is a valid json string
-                json.loads(schema)
-            elif isinstance(schema, dict):
-                # Convert the dict to a basestring
-                self.properties['Schema'] = json.dumps(schema)
-            elif isinstance(schema, AWSHelperFn):
-                pass
-            else:
-                raise ValueError("Schema must be a str or dict")
+        name = 'Schema'
+        if name in self.properties:
+            schema = self.properties.get(name)
+            self.properties[name] = json_checker(name, schema)
+
+
+class RequestValidator(AWSObject):
+    resource_type = "AWS::ApiGateway::RequestValidator"
+
+    props = {
+        "Name": (basestring, True),
+        "RestApiId": (basestring, True),
+        "ValidateRequestBody": (boolean, False),
+        "ValidateRequestParameters": (boolean, False),
+    }
 
 
 class Resource(AWSObject):
@@ -226,13 +267,14 @@ class RestApi(AWSObject):
     resource_type = "AWS::ApiGateway::RestApi"
 
     props = {
+        "BinaryMediaTypes": ([basestring], False),
         "Body": (dict, False),
         "BodyS3Location": (S3Location, False),
         "CloneFrom": (basestring, False),
         "Description": (basestring, False),
         "FailOnWarnings": (basestring, False),
         "Name": (basestring, False),
-        "Parameters": ([basestring], False)
+        "Parameters": ([basestring], False),
     }
 
 
@@ -245,6 +287,7 @@ class Stage(AWSObject):
         "ClientCertificateId": (basestring, False),
         "DeploymentId": (basestring, True),
         "Description": (basestring, False),
+        "DocumentationVersion": (basestring, False),
         "MethodSettings": ([MethodSetting], False),
         "RestApiId": (basestring, True),
         "StageName": (basestring, True),
@@ -293,4 +336,50 @@ class UsagePlanKey(AWSObject):
         "KeyId": (basestring, True),
         "KeyType": (basestring, True),
         "UsagePlanId": (basestring, True),
+    }
+
+
+def validate_gateway_response_type(response_type):
+    """ Validate response type
+    :param response_type: The GatewayResponse response type
+    :return: The provided value if valid
+    """
+    valid_response_types = [
+        "ACCESS_DENIED",
+        "API_CONFIGURATION_ERROR",
+        "AUTHORIZER_FAILURE",
+        "AUTHORIZER_CONFIGURATION_ERROR",
+        "BAD_REQUEST_PARAMETERS",
+        "BAD_REQUEST_BODY",
+        "DEFAULT_4XX",
+        "DEFAULT_5XX",
+        "EXPIRED_TOKEN",
+        "INVALID_SIGNATURE",
+        "INTEGRATION_FAILURE",
+        "INTEGRATION_TIMEOUT",
+        "INVALID_API_KEY",
+        "MISSING_AUTHENTICATION_TOKEN",
+        "QUOTA_EXCEEDED",
+        "REQUEST_TOO_LARGE",
+        "RESOURCE_NOT_FOUND",
+        "THROTTLED",
+        "UNAUTHORIZED",
+        "UNSUPPORTED_MEDIA_TYPES"
+    ]
+    if response_type not in valid_response_types:
+        raise ValueError(
+            "{} is not a valid ResponseType".format(response_type)
+        )
+    return response_type
+
+
+class GatewayResponse(AWSObject):
+    resource_type = "AWS::ApiGateway::GatewayResponse"
+
+    props = {
+        "ResponseParameters": (dict, False),
+        "ResponseTemplates": (dict, False),
+        "ResponseType": (validate_gateway_response_type, True),
+        "RestApiId": (basestring, True),
+        "StatusCode": (basestring, False)
     }

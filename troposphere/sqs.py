@@ -3,7 +3,7 @@
 #
 # See LICENSE file for full license.
 
-from . import AWSObject, AWSProperty
+from . import AWSHelperFn, AWSObject, AWSProperty
 from .validators import integer
 try:
     from awacs.aws import Policy
@@ -26,6 +26,8 @@ class Queue(AWSObject):
         'ContentBasedDeduplication': (bool, False),
         'DelaySeconds': (integer, False),
         'FifoQueue': (bool, False),
+        'KmsMasterKeyId': (basestring, False),
+        'KmsDataKeyReusePeriodSeconds': (integer, False),
         'MaximumMessageSize': (integer, False),
         'MessageRetentionPeriod': (integer, False),
         'QueueName': (basestring, False),
@@ -33,6 +35,15 @@ class Queue(AWSObject):
         'RedrivePolicy': (RedrivePolicy, False),
         'VisibilityTimeout': (integer, False),
     }
+
+    def validate(self):
+        if self.properties.get('FifoQueue'):
+            queuename = self.properties.get('QueueName', '')
+            if isinstance(queuename, AWSHelperFn):
+                pass
+            elif not queuename.endswith('.fifo'):
+                raise ValueError("SQS: FIFO queues need to provide a "
+                                 "QueueName that ends with '.fifo'")
 
 
 class QueuePolicy(AWSObject):

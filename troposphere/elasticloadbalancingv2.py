@@ -3,9 +3,11 @@
 #
 # See LICENSE file for full license.
 
-from . import AWSObject, AWSProperty
+from . import AWSObject, AWSProperty, Tags
 from .validators import (
-    elb_name, network_port, tg_healthcheck_port, integer)
+    elb_name, exactly_one, network_port,
+    tg_healthcheck_port, integer
+)
 
 
 class LoadBalancerAttributes(AWSProperty):
@@ -41,6 +43,13 @@ class Matcher(AWSProperty):
     }
 
 
+class SubnetMapping(AWSProperty):
+    props = {
+        'AllocationId': (basestring, True),
+        'SubnetId': (basestring, True)
+    }
+
+
 class TargetGroupAttribute(AWSProperty):
     props = {
         'Key': (basestring, False),
@@ -50,6 +59,7 @@ class TargetGroupAttribute(AWSProperty):
 
 class TargetDescription(AWSProperty):
     props = {
+        'AvailabilityZone': (basestring, False),
         'Id': (basestring, True),
         'Port': (network_port, False)
     }
@@ -68,6 +78,15 @@ class Listener(AWSObject):
     }
 
 
+class ListenerCertificate(AWSObject):
+    resource_type = "AWS::ElasticLoadBalancingV2::ListenerCertificate"
+
+    props = {
+        'Certificates': ([Certificate], True),
+        'ListenerArn': (basestring, True),
+    }
+
+
 class ListenerRule(AWSObject):
     resource_type = "AWS::ElasticLoadBalancingV2::ListenerRule"
 
@@ -77,6 +96,10 @@ class ListenerRule(AWSObject):
         'ListenerArn': (basestring, True),
         'Priority': (integer, True)
     }
+
+
+TARGET_TYPE_INSTANCE = 'instance'
+TARGET_TYPE_IP = 'ip'
 
 
 class TargetGroup(AWSObject):
@@ -93,11 +116,12 @@ class TargetGroup(AWSObject):
         'Name': (basestring, False),
         'Port': (network_port, True),
         'Protocol': (basestring, True),
-        'Tags': (list, False),
+        'Tags': ((Tags, list), False),
         'TargetGroupAttributes': ([TargetGroupAttribute], False),
         'Targets': ([TargetDescription], False),
+        'TargetType': (basestring, False),
         'UnhealthyThresholdCount': (integer, False),
-        'VpcId': (basestring, True)
+        'VpcId': (basestring, True),
     }
 
 
@@ -110,6 +134,15 @@ class LoadBalancer(AWSObject):
         'Scheme': (basestring, False),
         'IpAddressType': (basestring, False),
         'SecurityGroups': (list, False),
-        'Subnets': (list, True),
-        'Tags': (list, False),
+        'SubnetMappings': ([SubnetMapping], False),
+        'Subnets': (list, False),
+        'Tags': ((Tags, list), False),
+        'Type': (basestring, False),
     }
+
+    def validate(self):
+        conds = [
+            'SubnetMappings',
+            'Subnets',
+        ]
+        exactly_one(self.__class__.__name__, self.properties, conds)
