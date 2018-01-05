@@ -1,3 +1,64 @@
+## 2.1.2 (2017-12-03)
+- In SpotFleet::SpotFleetRequestConfigData SpotPrice is optional
+- Add RoutingConfig to AWS::Lambda::Alias
+- Update AWS::CodeDeploy
+- Add CodeDeployLambdaAliasUpdate to UpdatePolicy
+- Add AWS::GuardDuty
+- Add AWS::Cloud9
+- Add initial python resource spec generator
+- Update AWS::CodeBuild::Project to 20171201 changes
+- Change AWS::Batch::ComputeResources.Tags type to dict (#867)
+- Update README for YAML template (#925)
+- Typo fix in examples/ElastiCacheRedis.py (#926)
+- Adds Fargate support to ECS types (#929)
+- Fix SSM NotificationConfig validator type (#930)
+- Fix SQS::Queue validation in the case of no QueueName specified (#931)
+
+## 2.1.1 (2017-11-26)
+- Add support for VPCOptions in ElasticSearch (#862)
+- Add Description property for security group ingress and egress (#910)
+- Add QueryLoggingConfig to Route53::HostedZone
+- Add SourceRegion to RDS::DBInstance
+- Add RootVolumeSize and caleDownBehavior to EMR::Cluster
+- Add new properties to ElastiCache::ReplicationGroup
+- Add LinuxParameters to ECS::TaskDefinition ContainerDefinitions
+- Add LifecyclePolicy to ECR::Repository
+- Add ScheduledActions to ApplicationAutoScaling::ScalableTarget
+- Add new properties into ApiGateway
+
+## 2.1.0 (2017-11-19)
+- Output yaml (to_yaml) using cfn_flip (Fixes #567)
+- Allow AWSHelperFn for CodeCommit Trigger Event(s) (#869)
+- Adding the AWS::Glue resources (#872)
+- Use a list for Serverless::Function Tags (#873)
+- Support ProcessingConfiguration for Elasticsearch and Redshift (#876)
+- Fixes incorrect class definition. (#877)
+- Add TargetGroupInfo to DeploymentGroup #884 (#895)
+- Reverting #810 as AWS has changed the casing again (#896)
+- Add EMR Cluster MasterInstanceFleet and CoreInstanceFleet properties (#897)
+- Add EMR Cluster CustomAmiId (#888) (#898)
+- Add SecurityGroupRule Description property (#885) (#899)
+- Add support for tags in AWS::KMS::Key. (#900)
+- Adding OriginReadTimeout aka OriginResponseTimeout to cloudfront origin settings (#901)
+- Added property for OriginKeepaliveTimeout
+- Add CloudFrontOriginAccessIdentity type (#903)
+- Added support for VpnTunnelOptionsSpecifications (#904)
+- Allow ref on Parameter (#905)
+- Adds Tags to Cloudfront Distribution (#906)
+- CloudFront: add IPV6Enabled property for DistributionConfig (#908)
+- Add OptionVersion to RDS:OptionConfigurations
+- Add Tags to OpsWorks Layer and Stack
+- Add LifecycleHookSpecification in AutoScalingGroup
+- Add AmazonSideAsn to EC2::VPNGateway
+- Add StateMachineName to StepFunctions::StateMachine
+- Change KMS::Key to accept a standard Tags
+- Add LambdaFunctionAssociations to CloudFront CacheBehaviors
+- Add ResourceName to elasticbeanstalk OptionSettings
+- Add AnalyticsConfigurations and InventoryConfigurations to S3::Bucket
+- Add RequestValidatorId and OperationName to ApiGateway::Method
+- Add deprecation warning for StageName in ApiGateway StageDescription
+- Add AWS::CloudFront::StreamingDistribution
+
 ## 2.0.2 (2017-10-23)
 - Set EC2 BlockDeviceMapping NoDevice property to type dict (#866)
 

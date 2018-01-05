@@ -2,6 +2,10 @@ from . import AWSObject, AWSProperty
 from .validators import boolean, integer, network_port, positive_integer
 
 
+LAUNCH_TYPE_EC2 = 'EC2'
+LAUNCH_TYPE_FARGATE = 'FARGATE'
+
+
 class Cluster(AWSObject):
     resource_type = "AWS::ECS::Cluster"
 
@@ -56,6 +60,28 @@ class PlacementStrategy(AWSProperty):
     }
 
 
+class AwsvpcConfiguration(AWSProperty):
+    props = {
+        'AssignPublicIp': (basestring, False),
+        'SecurityGroups': (list, False),
+        'Subnets': (list, True),
+    }
+
+
+class NetworkConfiguration(AWSProperty):
+    props = {
+        'AwsvpcConfiguration': (AwsvpcConfiguration, False),
+    }
+
+
+def launch_type_validator(x):
+    valid_values = [LAUNCH_TYPE_EC2, LAUNCH_TYPE_FARGATE]
+    if x not in valid_values:
+        raise ValueError("Launch Type must be one of: %s" %
+                         ', '.join(valid_values))
+    return x
+
+
 class Service(AWSObject):
     resource_type = "AWS::ECS::Service"
 
@@ -63,10 +89,13 @@ class Service(AWSObject):
         'Cluster': (basestring, False),
         'DeploymentConfiguration': (DeploymentConfiguration, False),
         'DesiredCount': (positive_integer, False),
+        'LaunchType': (launch_type_validator, False),
         'LoadBalancers': ([LoadBalancer], False),
+        'NetworkConfiguration': (NetworkConfiguration, False),
         'Role': (basestring, False),
         'PlacementConstraints': ([PlacementConstraint], False),
         'PlacementStrategies': ([PlacementStrategy], False),
+        'PlatformVersion': (basestring, False),
         'ServiceName': (basestring, False),
         'TaskDefinition': (basestring, True),
     }
@@ -109,6 +138,29 @@ class HostEntry(AWSProperty):
     }
 
 
+class Device(AWSProperty):
+    props = {
+        'ContainerPath': (basestring, False),
+        'HostPath': (basestring, False),
+        'Permissions': ([basestring], False),
+    }
+
+
+class KernelCapabilities(AWSProperty):
+    props = {
+        'Add': ([basestring], False),
+        'Drop': ([basestring], False),
+    }
+
+
+class LinuxParameters(AWSProperty):
+    props = {
+        'Capabilities': (KernelCapabilities, False),
+        'Devices': ([Device], False),
+        'InitProcessEnabled': (boolean, False),
+    }
+
+
 class LogConfiguration(AWSProperty):
     props = {
         'LogDriver': (basestring, True),
@@ -140,6 +192,7 @@ class ContainerDefinition(AWSProperty):
         'Hostname': (basestring, False),
         'Image': (basestring, True),
         'Links': ([basestring], False),
+        'LinuxParameters': (LinuxParameters, False),
         'LogConfiguration': (LogConfiguration, False),
         'Memory': (positive_integer, False),
         'MemoryReservation': (positive_integer, False),
@@ -173,9 +226,13 @@ class TaskDefinition(AWSObject):
 
     props = {
         'ContainerDefinitions': ([ContainerDefinition], True),
+        'Cpu': (basestring, False),
+        'ExecutionRoleArn': (basestring, False),
         'Family': (basestring, False),
+        'Memory': (basestring, False),
         'NetworkMode': (basestring, False),
         'PlacementConstraints': ([PlacementConstraint], False),
+        'RequiresCompatibilities': ([basestring], False),
         'TaskRoleArn': (basestring, False),
         'Volumes': ([Volume], False),
     }

@@ -12,7 +12,7 @@ from .validators import (integer, boolean, s3_bucket_name, notification_type,
 class NotificationConfig(AWSProperty):
     props = {
         'NotificationArn': (basestring, False),
-        'NotificationEvents': ([notification_event], False),
+        'NotificationEvents': (notification_event, False),
         'NotificationType': (notification_type, False),
     }
 
@@ -78,7 +78,7 @@ class Rule(AWSProperty):
     props = {
         'ApproveAfterDays': (integer, False),
         'ComplianceLevel': (compliance_level, False),
-        'PatchFilterGroup': (PatchFilter, False),
+        'PatchFilterGroup': (PatchFilterGroup, False),
     }
 
 
