@@ -226,7 +226,7 @@ class DBInstance(AWSObject):
         iops = self.properties.get('Iops', None)
         if iops and not isinstance(iops, AWSHelperFn):
             if not isinstance(allocated_storage, AWSHelperFn) and \
-                    allocated_storage < 100:
+                    int(allocated_storage) < 100:
                 raise ValueError("AllocatedStorage must be at least 100 when "
                                  "Iops is set.")
             if not isinstance(allocated_storage, AWSHelperFn) and not \
@@ -254,6 +254,7 @@ class DBSubnetGroup(AWSObject):
 
     props = {
         'DBSubnetGroupDescription': (basestring, True),
+        'DBSubnetGroupName': (basestring, False),
         'SubnetIds': (list, True),
         'Tags': ((Tags, list), False),
     }
