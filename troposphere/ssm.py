@@ -3,7 +3,7 @@
 #
 # See LICENSE file for full license.
 
-from . import AWSObject, AWSProperty
+from . import AWSObject, AWSProperty, Tags
 from .validators import (integer, boolean, s3_bucket_name, notification_type,
                          notification_event, json_checker, task_type,
                          operating_system, compliance_level)
@@ -108,6 +108,19 @@ class Targets(AWSProperty):
     }
 
 
+class S3OutputLocation(AWSProperty):
+    props = {
+        'OutputS3BucketName': (basestring, False),
+        'OutputS3KeyPrefix': (basestring, False),
+    }
+
+
+class InstanceAssociationOutputLocation(AWSProperty):
+    props = {
+        'S3Location': (S3OutputLocation, False),
+    }
+
+
 class Association(AWSObject):
     resource_type = "AWS::SSM::Association"
 
@@ -116,6 +129,7 @@ class Association(AWSObject):
         'DocumentVersion': (basestring, False),
         'InstanceId': (basestring, False),
         'Name': (basestring, True),
+        'OutputLocation': (InstanceAssociationOutputLocation, False),
         'Parameters': (dict, False),
         'ScheduleExpression': (basestring, False),
         'Targets': ([Targets], False),
@@ -129,6 +143,7 @@ class Document(AWSObject):
         # Need a better implementation of the SSM Document
         'Content': (dict, True),
         'DocumentType': (basestring, False),
+        'Tags': (Tags, False),
     }
 
 

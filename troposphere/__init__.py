@@ -13,7 +13,7 @@ import types
 
 from . import validators
 
-__version__ = "2.2.0"
+__version__ = "2.3.0"
 
 # constants for DeletionPolicy
 Delete = 'Delete'
@@ -130,6 +130,13 @@ class BaseAWSObject(object):
             self.template.add_resource(self)
 
     def __getattr__(self, name):
+        # If pickle loads this object, then __getattr__ will cause
+        # an infinite loop when pickle invokes this object to look for
+        # __setstate__ before attributes is "loaded" into this object.
+        # Therefore, short circuit the rest of this call if attributes
+        # is not loaded yet.
+        if "attributes" not in self.__dict__:
+            raise AttributeError(name)
         try:
             if name in self.attributes:
                 return self.resource[name]
@@ -412,6 +419,14 @@ class GetAtt(AWSHelperFn):
         self.data = {'Fn::GetAtt': [self.getdata(logicalName), attrName]}
 
 
+class Cidr(AWSHelperFn):
+    def __init__(self, ipblock, count, sizemask=None):
+        if sizemask:
+            self.data = {'Fn::Cidr': [ipblock, count, sizemask]}
+        else:
+            self.data = {'Fn::Cidr': [ipblock, count]}
+
+
 class GetAZs(AWSHelperFn):
     def __init__(self, region=""):
         self.data = {'Fn::GetAZs': region}
@@ -472,6 +487,14 @@ class Select(AWSHelperFn):
 class Ref(AWSHelperFn):
     def __init__(self, data):
         self.data = {'Ref': self.getdata(data)}
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.data == other.data
+        return self.data.values()[0] == other
+
+    def __hash__(self):
+        return hash(self.data.values()[0])
 
 
 # Pseudo Parameter Ref's
@@ -625,8 +648,9 @@ class Template(object):
         return json.dumps(self.to_dict(), indent=indent,
                           sort_keys=sort_keys, separators=separators)
 
-    def to_yaml(self, long_form=False):
-        return cfn_flip.to_yaml(self.to_json(), long_form)
+    def to_yaml(self, clean_up=False, long_form=False):
+        return cfn_flip.to_yaml(self.to_json(), clean_up=clean_up,
+                                long_form=long_form)
 
 
 class Export(AWSHelperFn):
