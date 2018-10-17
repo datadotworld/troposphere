@@ -1,3 +1,65 @@
+## 2.3.3 (2018-09-05)
+- Revert schedule expression validation (#1114)
+
+## 2.3.2 (2018-09-04)
+- Auto add Parameter and Output to template when specified (#1018)
+- Changed policy to AmazonDynamoDBFullAccess for delete and put (#1106)
+- Fix CPUCredits casing and implement LaunchTemplateCreditSpecification class (#1100)
+- Add UsernameAttributes to Cognito (#1104)
+- Add SQS Event to serverless.py (#1103)
+- Add support for Windows containers in CodeBuild (#1097)
+- Generate class stubs necessary for autocompletion (#1079)
+- Add AWS::IAM::ServiceLinkedRole (#1110)
+- Made S3 Prefix in Firehose optional (#1102)
+- Prefix is still required in ExtendedS3DestinationConfiguration
+- SimpleTable has more attributes (#1108)
+- Alphabetize properties in servlerless::SimpleTable
+- AccountAggregationSources must be a list (#1111)
+- Schedule expression validation (#1114)
+- Add EndpointIdnetifier property to AWS::DMS::Endpoint object (#1117)
+- Add get_or_add parameter method (#1118)
+- Added HealthCheckCustomConfig to ServiceDiscovery Service (#1120)
+- Tags support for SQS queues (#1121)
+- VPCPeeringConnection PeerRegion (#1123)
+- Add FilterPolicy as a property of SubscriptionResource (#1125)
+- Add missing properties to SNS::Subscription
+- Add ThroughputMode and ProvisionedThroughputInMibps to EFS (#1124) (#1126)
+- Add AWS::EC2::VPCEndpointServicePermissions (#1130)
+- AMAZON_LINUX_2 is now supported by SSM (#1133)
+- [codebuild] Source - use value comparison instead of identity (#1134)
+- InvitationId in GuardDuty::Master is now optional
+- Fix missing boolean import in sns
+- Add CodePipeline::Webhook resource
+- Add ReportBuildStatus to CodeBuild Source property
+- Add HttpConfig to AppSync::DataSource
+- Add FieldLevelEncryptionId to CacheBehavior properties
+- Add Timeout to Batch::JobDefinition
+- Add EncryptionDisabled and OverrideArtifactName to CodeBuild Artifacts
+- Add SSESpecification to DAX::Cluster
+- Add KerberosAttributes to EMR::Cluster
+- Add ValidationMethod to CertificateManager::Certificate
+- Add Classifiers and Configuration to Glue resources
+- Add SecondaryArtifacts and SecondarySources to CodeBuild::Project
+- Add Logs to AmazonMQ::Broker
+
+## 2.3.1 (2018-07-01)
+- Add support for AWS::Neptune
+- Add support for AWS::EKS
+- Add support for AWS::AmazonMQ
+- Add support for AWS::SageMaker
+- Fix use of to_yaml long_form parameter (#1055)
+- Adding CENTOS to validators.operating_system (#1058)
+- Update constants with additional EC2 instances (#1059)
+- Fix casing of CreditSpecification CpuCredits (#1068)
+- Add 'Name' property for AWS::Serverless::Api (#1070)
+- Add equality methods to Template (#1072)
+- AWS PrivateLink support (#1084)
+- Add return value to template.add_condition() (#1087)
+- Add tests for to_yaml parameters
+- Use endpoint_type for vpc_endpoint_type param instead of type
+- Add resource EC2::VPCEndpointConnectionNotification
+- Add resource SSM::ResourceDataSync
+
 ## 2.3.0 (2018-05-26)
 
 - Allow Refs to be hashable using their data (#1053)

@@ -6,7 +6,8 @@
 from . import AWSHelperFn, AWSObject, AWSProperty, Tags
 from .validators import (
     boolean, exactly_one, integer, integer_range,
-    network_port, positive_integer, vpn_pre_shared_key, vpn_tunnel_inside_cidr
+    network_port, positive_integer, vpn_pre_shared_key, vpn_tunnel_inside_cidr,
+    vpc_endpoint_type
 )
 
 try:
@@ -89,8 +90,10 @@ class FlowLog(AWSObject):
     resource_type = "AWS::EC2::FlowLog"
 
     props = {
-        'DeliverLogsPermissionArn': (basestring, True),
-        'LogGroupName': (basestring, True),
+        'DeliverLogsPermissionArn': (basestring, False),
+        'LogDestination': (basestring, False),
+        'LogDestinationType': (basestring, False),
+        'LogGroupName': (basestring, False),
         'ResourceId': (basestring, True),
         'ResourceType': (basestring, True),
         'TrafficType': (basestring, True),
@@ -232,7 +235,7 @@ class Instance(AWSObject):
         'ElasticGpuSpecifications': ([ElasticGpuSpecification], False),
         'HostId': (basestring, False),
         'IamInstanceProfile': (basestring, False),
-        'ImageId': (basestring, True),
+        'ImageId': (basestring, False),
         'InstanceInitiatedShutdownBehavior': (basestring, False),
         'InstanceType': (basestring, False),
         'Ipv6AddressCount': (integer, False),
@@ -581,9 +584,42 @@ class VPCEndpoint(AWSObject):
 
     props = {
         'PolicyDocument': (policytypes, False),
+        'PrivateDnsEnabled': (boolean, False),
         'RouteTableIds': ([basestring], False),
+        'SecurityGroupIds': ([basestring], False),
         'ServiceName': (basestring, True),
+        'SubnetIds': ([basestring], False),
+        'VpcEndpointType': (vpc_endpoint_type, False),
         'VpcId': (basestring, True),
+    }
+
+
+class VPCEndpointConnectionNotification(AWSObject):
+    resource_type = "AWS::EC2::VPCEndpointConnectionNotification"
+
+    props = {
+        'ConnectionEvents': ([basestring], True),
+        'ConnectionNotificationArn': (basestring, True),
+        'ServiceId': (basestring, False),
+        'VPCEndpointId': (basestring, False),
+    }
+
+
+class VPCEndpointService(AWSObject):
+    resource_type = "AWS::EC2::VPCEndpointService"
+
+    props = {
+        'AcceptanceRequired': (boolean, False),
+        'NetworkLoadBalancerArns': ([basestring], True),
+    }
+
+
+class VPCEndpointServicePermissions(AWSObject):
+    resource_type = "AWS::EC2::VPCEndpointServicePermissions"
+
+    props = {
+        'AllowedPrincipals': ([basestring], False),
+        'ServiceId': (basestring, True),
     }
 
 
@@ -654,6 +690,7 @@ class VPCPeeringConnection(AWSObject):
         'PeerVpcId': (basestring, True),
         'VpcId': (basestring, True),
         'Tags': ((Tags, list), False),
+        'PeerRegion': (basestring, False),
         'PeerOwnerId': (basestring, False),
         'PeerRoleArn': (basestring, False),
     }
@@ -795,10 +832,16 @@ class InstanceMarketOptions(AWSProperty):
     }
 
 
+class LaunchTemplateCreditSpecification(AWSProperty):
+    props = {
+        'CpuCredits': (basestring, False),
+    }
+
+
 class LaunchTemplateData(AWSProperty):
     props = {
         'BlockDeviceMappings': ([BlockDeviceMapping], False),
-        'CreditSpecification': (CreditSpecification, False),
+        'CreditSpecification': (LaunchTemplateCreditSpecification, False),
         'DisableApiTermination': (boolean, False),
         'EbsOptimized': (boolean, False),
         'ElasticGpuSpecifications': ([ElasticGpuSpecification], False),

@@ -13,7 +13,7 @@ import types
 
 from . import validators
 
-__version__ = "2.3.0"
+__version__ = "2.3.3"
 
 # constants for DeletionPolicy
 Delete = 'Delete'
@@ -125,6 +125,9 @@ class BaseAWSObject(object):
         for k, v in kwargs.items():
             self.__setattr__(k, v)
 
+        self.add_to_template()
+
+    def add_to_template(self):
         # Bound it to template if we know it
         if self.template is not None:
             self.template.add_resource(self)
@@ -576,6 +579,7 @@ class Template(object):
 
     def add_condition(self, name, condition):
         self.conditions[name] = condition
+        return name
 
     def handle_duplicate_key(self, key):
         raise ValueError('duplicate key "%s" detected' % key)
@@ -606,6 +610,13 @@ class Template(object):
         if len(self.parameters) >= MAX_PARAMETERS:
             raise ValueError('Maximum parameters %d reached' % MAX_PARAMETERS)
         return self._update(self.parameters, parameter)
+
+    def get_or_add_parameter(self, parameter):
+        if parameter.title in self.parameters:
+            return self.parameters[parameter.title]
+        else:
+            self.add_parameter(parameter)
+        return parameter
 
     def add_resource(self, resource):
         if len(self.resources) >= MAX_RESOURCES:
@@ -644,6 +655,52 @@ class Template(object):
 
         return encode_to_dict(t)
 
+    def set_parameter_label(self, parameter, label):
+        """
+        Sets the Label used in the User Interface for the given parameter.
+        :type parameter: str or Parameter
+        :type label: str
+        """
+        labels = self.metadata\
+            .setdefault("AWS::CloudFormation::Interface", {})\
+            .setdefault("ParameterLabels", {})
+
+        if isinstance(parameter, BaseAWSObject):
+            parameter = parameter.title
+
+        labels[parameter] = {"default": label}
+
+    def add_parameter_to_group(self, parameter, group_name):
+        """
+        Add a parameter under a group (created if needed).
+        :type parameter: str or Parameter
+        :type group_name: str
+        """
+        groups = self.metadata \
+            .setdefault("AWS::CloudFormation::Interface", {}) \
+            .setdefault("ParameterGroups", [])
+
+        if isinstance(parameter, BaseAWSObject):
+            parameter = parameter.title
+
+        # Check if group_name already exists
+        existing_group = None
+        for group in groups:
+            if group["Label"]["default"] == group_name:
+                existing_group = group
+                break
+
+        if existing_group is None:
+            existing_group = {
+                "Label": {"default": group_name},
+                "Parameters": [],
+            }
+            groups.append(existing_group)
+
+        existing_group["Parameters"].append(parameter)
+
+        return group_name
+
     def to_json(self, indent=4, sort_keys=True, separators=(',', ': ')):
         return json.dumps(self.to_dict(), indent=indent,
                           sort_keys=sort_keys, separators=separators)
@@ -651,6 +708,18 @@ class Template(object):
     def to_yaml(self, clean_up=False, long_form=False):
         return cfn_flip.to_yaml(self.to_json(), clean_up=clean_up,
                                 long_form=long_form)
+
+    def __eq__(self, other):
+        if isinstance(other, Template):
+            return (self.to_json() == other.to_json())
+        else:
+            return False
+
+    def __ne__(self, other):
+        return (not self.__eq__(other))
+
+    def __hash__(self):
+        return hash(self.to_json())
 
 
 class Export(AWSHelperFn):
@@ -666,6 +735,11 @@ class Output(AWSDeclaration):
         'Export': (Export, False),
         'Value': (basestring, True),
     }
+
+    def add_to_template(self):
+        # Bound it to template if we know it
+        if self.template is not None:
+            self.template.add_output(self)
 
 
 class Parameter(AWSDeclaration):
@@ -684,6 +758,11 @@ class Parameter(AWSDeclaration):
         'Description': (basestring, False),
         'ConstraintDescription': (basestring, False),
     }
+
+    def add_to_template(self):
+        # Bound it to template if we know it
+        if self.template is not None:
+            self.template.add_parameter(self)
 
     def validate_title(self):
         if len(self.title) > PARAMETER_TITLE_MAX:

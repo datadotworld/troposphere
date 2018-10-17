@@ -5,6 +5,9 @@ from .validators import boolean, integer, network_port, positive_integer
 LAUNCH_TYPE_EC2 = 'EC2'
 LAUNCH_TYPE_FARGATE = 'FARGATE'
 
+SCHEDULING_STRATEGY_REPLICA = 'REPLICA'
+SCHEDULING_STRATEGY_DAEMON = 'DAEMON'
+
 
 class Cluster(AWSObject):
     resource_type = "AWS::ECS::Cluster"
@@ -42,6 +45,14 @@ def placement_constraint_validator(x):
     valid_values = ['distinctInstance', 'memberOf']
     if x not in valid_values:
         raise ValueError("Placement Constraint type must be one of: %s" %
+                         ', '.join(valid_values))
+    return x
+
+
+def scope_validator(x):
+    valid_values = ['shared', 'task']
+    if x not in valid_values:
+        raise ValueError("Scope type must be one of: %s" %
                          ', '.join(valid_values))
     return x
 
@@ -84,6 +95,8 @@ def launch_type_validator(x):
 
 class ServiceRegistry(AWSProperty):
     props = {
+        'ContainerName': (basestring, False),
+        'ContainerPort': (integer, False),
         'Port': (integer, False),
         'RegistryArn': (basestring, False),
     }
@@ -104,6 +117,7 @@ class Service(AWSObject):
         'PlacementConstraints': ([PlacementConstraint], False),
         'PlacementStrategies': ([PlacementStrategy], False),
         'PlatformVersion': (basestring, False),
+        'SchedulingStrategy': (basestring, False),
         'ServiceName': (basestring, False),
         'ServiceRegistries': ([ServiceRegistry], False),
         'TaskDefinition': (basestring, True),
@@ -187,6 +201,12 @@ class LogConfiguration(AWSProperty):
     }
 
 
+class RepositoryCredentials(AWSProperty):
+    props = {
+        'CredentialsParameter': (basestring, False)
+    }
+
+
 class Ulimit(AWSProperty):
     props = {
         'HardLimit': (integer, True),
@@ -221,6 +241,7 @@ class ContainerDefinition(AWSProperty):
         'PortMappings': ([PortMapping], False),
         'Privileged': (boolean, False),
         'ReadonlyRootFilesystem': (boolean, False),
+        'RepositoryCredentials': (RepositoryCredentials, False),
         'Ulimits': ([Ulimit], False),
         'User': (basestring, False),
         'VolumesFrom': ([VolumesFrom], False),
@@ -234,8 +255,19 @@ class Host(AWSProperty):
     }
 
 
+class DockerVolumeConfiguration(AWSProperty):
+    props = {
+        'Autoprovision': (boolean, False),
+        'Driver': (basestring, False),
+        'DriverOpts': ([basestring], False),
+        'Labels': ([basestring], False),
+        'Scope': (scope_validator, False)
+    }
+
+
 class Volume(AWSProperty):
     props = {
+        'DockerVolumeConfiguration': (DockerVolumeConfiguration, False),
         'Name': (basestring, True),
         'Host': (Host, False),
     }

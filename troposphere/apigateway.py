@@ -197,6 +197,8 @@ class Integration(AWSProperty):
     props = {
         "CacheKeyParameters": ([basestring], False),
         "CacheNamespace": (basestring, False),
+        "ConnectionId": (basestring, False),
+        "ConnectionType": (basestring, False),
         "ContentHandling": (basestring, False),
         "Credentials": (basestring, False),
         "IntegrationHttpMethod": (basestring, False),
@@ -300,7 +302,7 @@ class RestApi(AWSObject):
         "FailOnWarnings": (basestring, False),
         "MinimumCompressionSize": (positive_integer, False),
         "Name": (basestring, False),
-        "Parameters": ([basestring], False),
+        "Parameters": (dict, False),
         "Policy": (dict, False),
     }
 
