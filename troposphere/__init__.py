@@ -13,7 +13,7 @@ import types
 
 from . import validators
 
-__version__ = "2.3.3"
+__version__ = "2.3.4"
 
 # constants for DeletionPolicy
 Delete = 'Delete'
@@ -473,7 +473,10 @@ class Split(AWSHelperFn):
 
 
 class Sub(AWSHelperFn):
-    def __init__(self, input_str, **values):
+    def __init__(self, input_str, dict_values=None, **values):
+        # merge dict
+        if dict_values:
+            values.update(dict_values)
         self.data = {'Fn::Sub': [input_str, values] if values else input_str}
 
 
@@ -547,6 +550,10 @@ class Tags(AWSHelperFn):
 
     def to_dict(self):
         return [encode_to_dict(tag) for tag in self.tags]
+
+    @classmethod
+    def from_dict(cls, title=None, **kwargs):
+        return cls(**kwargs)
 
 
 class Template(object):

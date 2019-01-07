@@ -5,13 +5,24 @@
 
 from . import AWSObject, AWSProperty, AWSHelperFn, Tags
 from .validators import (
-    boolean, integer, positive_integer, floatingpoint, defer
+    boolean, integer, positive_integer, double, defer
 )
 
 
 CHANGE_IN_CAPACITY = 'CHANGE_IN_CAPACITY'
 PERCENT_CHANGE_IN_CAPACITY = 'PERCENT_CHANGE_IN_CAPACITY'
 EXACT_CAPACITY = 'EXACT_CAPACITY'
+ACTIONS_ON_FAILURE = ('TERMINATE_CLUSTER', 'CANCEL_AND_WAIT',
+                      'TERMINATE_JOB_FLOW')
+
+
+def validate_action_on_failure(action_on_failure):
+    """Validate action on failure for EMR StepConfig """
+
+    if action_on_failure not in ACTIONS_ON_FAILURE:
+        raise ValueError("StepConfig ActionOnFailure  must be one of: %s" %
+                         ", ".join(ACTIONS_ON_FAILURE))
+    return action_on_failure
 
 
 class KeyValue(AWSProperty):
@@ -197,7 +208,7 @@ class SimpleScalingPolicyConfiguration(AWSProperty):
             if adjustment_type == CHANGE_IN_CAPACITY:
                 integer(scaling_adjustment)
             elif adjustment_type == PERCENT_CHANGE_IN_CAPACITY:
-                floatingpoint(scaling_adjustment)
+                double(scaling_adjustment)
                 f = float(scaling_adjustment)
                 if f < 0.0 or f > 1.0:
                     raise ValueError(
@@ -302,6 +313,7 @@ class JobFlowInstancesConfig(AWSProperty):
         'EmrManagedMasterSecurityGroup': (basestring, False),
         'EmrManagedSlaveSecurityGroup': (basestring, False),
         'HadoopVersion': (basestring, False),
+        'KeepJobFlowAliveWhenNoSteps': (boolean, False),
         'MasterInstanceFleet': (InstanceFleetConfigProperty, False),
         'MasterInstanceGroup': (InstanceGroupConfigProperty, False),
         'Placement': (PlacementType, False),
@@ -317,6 +329,23 @@ class KerberosAttributes(AWSProperty):
         'CrossRealmTrustPrincipalPassword': (basestring, False),
         'KdcAdminPassword': (basestring, True),
         'Realm': (basestring, True),
+    }
+
+
+class HadoopJarStepConfig(AWSProperty):
+    props = {
+        'Args': ([basestring], False),
+        'Jar': (basestring, True),
+        'MainClass': (basestring, False),
+        'StepProperties': ([KeyValue], False)
+    }
+
+
+class StepConfig(AWSProperty):
+    props = {
+        'ActionOnFailure': (validate_action_on_failure, False),
+        'HadoopJarStep': (HadoopJarStepConfig, True),
+        'Name': (basestring, True),
     }
 
 
@@ -340,6 +369,7 @@ class Cluster(AWSObject):
         'ScaleDownBehavior': (basestring, False),
         'SecurityConfiguration': (basestring, False),
         'ServiceRole': (basestring, True),
+        'Steps': ([StepConfig], False),
         'Tags': ((Tags, list), False),
         'VisibleToAllUsers': (boolean, False)
     }
@@ -374,15 +404,6 @@ class InstanceGroupConfig(AWSObject):
         'JobFlowId': (basestring, True),
         'Market': (market_validator, False),
         'Name': (basestring, False)
-    }
-
-
-class HadoopJarStepConfig(AWSProperty):
-    props = {
-        'Args': ([basestring], False),
-        'Jar': (basestring, True),
-        'MainClass': (basestring, False),
-        'StepProperties': ([KeyValue], False)
     }
 
 
