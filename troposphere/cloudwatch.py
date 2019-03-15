@@ -89,6 +89,7 @@ class Alarm(AWSObject):
     def validate(self):
         conds = [
             'ExtendedStatistic',
+            'Metrics',
             'Statistic',
         ]
         exactly_one(self.__class__.__name__, self.properties, conds)
@@ -106,4 +107,4 @@ class Dashboard(AWSObject):
         name = 'DashboardBody'
         if name in self.properties:
             dashboard_body = self.properties.get(name)
-            self.properties[name] = json_checker(name, dashboard_body)
+            self.properties[name] = json_checker(dashboard_body)

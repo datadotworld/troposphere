@@ -44,7 +44,7 @@ def integer_range(minimum_val, maximum_val):
 
 def integer_list_item(allowed_values):
     def integer_list_item_checker(x):
-        i = positive_integer(x)
+        i = int(x)
         if i in allowed_values:
             return x
         raise ValueError('Integer must be one of following: %s' %
@@ -194,6 +194,15 @@ def iam_group_name(group_name):
     return group_name
 
 
+def one_of(class_name, properties, property, conditionals):
+    if properties.get(property) not in conditionals:
+        raise ValueError(
+            '%s.%s must be one of: "%s"' % (
+                class_name, property, ', '.join(conditionals)
+            )
+        )
+
+
 def mutually_exclusive(class_name, properties, conditionals):
     from . import NoValue
 
@@ -225,7 +234,7 @@ def check_required(class_name, properties, conditionals):
             raise ValueError("Resource %s required in %s" % c, class_name)
 
 
-def json_checker(name, prop):
+def json_checker(prop):
     from . import AWSHelperFn
 
     if isinstance(prop, basestring):
@@ -238,7 +247,7 @@ def json_checker(name, prop):
     elif isinstance(prop, AWSHelperFn):
         return prop
     else:
-        raise ValueError("%s must be a str or dict" % name)
+        raise ValueError("json object must be a str or dict")
 
 
 def notification_type(notification):
@@ -393,3 +402,71 @@ def statistic_type(statistic):
             )
         )
     return(statistic)
+
+
+def key_usage_type(key):
+    valid_values = ['ENCRYPT_DECRYPT']
+    if key not in valid_values:
+        raise ValueError(
+            'KeyUsage must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(key)
+
+
+def cloudfront_event_type(event_type):
+    valid_values = ['viewer-request', 'viewer-response',
+                    'origin-request', 'origin-response']
+    if event_type not in valid_values:
+        raise ValueError(
+            'EventType must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(event_type)
+
+
+def cloudfront_viewer_protocol_policy(viewer_protocol_policy):
+    valid_values = ['allow-all', 'redirect-to-https', 'https-only']
+    if viewer_protocol_policy not in valid_values:
+        raise ValueError(
+            'ViewerProtocolPolicy must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(viewer_protocol_policy)
+
+
+def cloudfront_restriction_type(restriction_type):
+    valid_values = ['none', 'blacklist', 'whitelist']
+    if restriction_type not in valid_values:
+        raise ValueError(
+            'RestrictionType must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(restriction_type)
+
+
+def cloudfront_forward_type(forward):
+    valid_values = ['none', 'all', 'whitelist']
+    if forward not in valid_values:
+        raise ValueError(
+            'Forward must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(forward)
+
+
+def priceclass_type(price_class):
+    valid_values = ['PriceClass_100', 'PriceClass_200',
+                    'PriceClass_All']
+    if price_class not in valid_values:
+        raise ValueError(
+            'PriceClass must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(price_class)

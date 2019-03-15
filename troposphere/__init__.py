@@ -2,7 +2,7 @@
 # All rights reserved.
 #
 # See LICENSE file for full license.
-
+import warnings
 
 import cfn_flip
 import collections
@@ -13,9 +13,9 @@ import types
 
 from . import validators
 
-__version__ = "2.3.4"
+__version__ = "2.4.5"
 
-# constants for DeletionPolicy
+# constants for DeletionPolicy and UpdateReplacePolicy
 Delete = 'Delete'
 Retain = 'Retain'
 Snapshot = 'Snapshot'
@@ -94,9 +94,10 @@ class BaseAWSObject(object):
         self.do_validation = validation
         # Cache the keys for validity checks
         self.propnames = self.props.keys()
-        self.attributes = ['DependsOn', 'DeletionPolicy',
-                           'Metadata', 'UpdatePolicy',
-                           'Condition', 'CreationPolicy']
+        self.attributes = [
+            'Condition', 'CreationPolicy', 'DeletionPolicy', 'DependsOn',
+            'Metadata', 'UpdatePolicy', 'UpdateReplacePolicy',
+        ]
 
         # try to validate the title if its there
         if self.title:
@@ -507,6 +508,7 @@ class Ref(AWSHelperFn):
 AccountId = Ref(AWS_ACCOUNT_ID)
 NotificationARNs = Ref(AWS_NOTIFICATION_ARNS)
 NoValue = Ref(AWS_NO_VALUE)
+Partition = Ref(AWS_PARTITION)
 Region = Ref(AWS_REGION)
 StackId = Ref(AWS_STACK_ID)
 StackName = Ref(AWS_STACK_NAME)
@@ -536,12 +538,18 @@ class Tags(AWSHelperFn):
                 raise(TypeError, "Tags needs to be either kwargs or dict")
             tag_dict = args[0]
 
+        def add_tag(tag_list, k, v):
+            tag_list.append({'Key': k, 'Value': v, })
+
         self.tags = []
-        for k, v in sorted(tag_dict.iteritems()):
-            self.tags.append({
-                'Key': k,
-                'Value': v,
-            })
+
+        # Detect and handle non-string Tag items which do not sort in Python3
+        if all(isinstance(k, basestring) for k in tag_dict):
+            for k, v in sorted(tag_dict.items()):
+                add_tag(self.tags, k, v)
+        else:
+            for k, v in tag_dict.items():
+                add_tag(self.tags, k, v)
 
     # allow concatenation of the Tags object via '+' operator
     def __add__(self, newtags):
@@ -578,11 +586,29 @@ class Template(object):
         self.version = None
         self.transform = None
 
-    def add_description(self, description):
+    def set_description(self, description):
         self.description = description
 
-    def add_metadata(self, metadata):
+    def add_description(self, description):
+        warnings.warn(
+            "The add_description() method is deprecated, please switch to "
+            "using set_description() instead.\n",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.set_description(description)
+
+    def set_metadata(self, metadata):
         self.metadata = metadata
+
+    def add_metadata(self, metadata):
+        warnings.warn(
+            "The add_metadata() method is deprecated, please switch to using "
+            "set_metadata() instead.\n",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.set_metadata(metadata)
 
     def add_condition(self, name, condition):
         self.conditions[name] = condition
@@ -631,14 +657,32 @@ class Template(object):
                              % MAX_RESOURCES)
         return self._update(self.resources, resource)
 
-    def add_version(self, version=None):
+    def set_version(self, version=None):
         if version:
             self.version = version
         else:
             self.version = "2010-09-09"
 
-    def add_transform(self, transform):
+    def add_version(self, version=None):
+        warnings.warn(
+            "The add_version() method is deprecated, please switch to using "
+            "set_version() instead.\n",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.set_version(version)
+
+    def set_transform(self, transform):
         self.transform = transform
+
+    def add_transform(self, transform):
+        warnings.warn(
+            "The add_transform() method is deprecated, please switch to using "
+            "set_transform() instead.\n",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.set_transform(transform)
 
     def to_dict(self):
         t = {}

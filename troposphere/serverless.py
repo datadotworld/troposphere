@@ -6,6 +6,7 @@
 import types
 
 from . import AWSObject, AWSProperty
+from .apigateway import AccessLogSetting, CanarySetting, MethodSetting
 from .awslambda import Environment, VPCConfig, validate_memory_size
 from .dynamodb import ProvisionedThroughput, SSESpecification
 from .s3 import Filter
@@ -43,15 +44,14 @@ class S3Location(AWSProperty):
     props = {
         "Bucket": (basestring, True),
         "Key": (basestring, True),
-        "Version": (basestring, False)
+        "Version": (basestring, False),
     }
 
 
 class Hooks(AWSProperty):
     props = {
         "PreTraffic": (basestring, False),
-        "PostTraffic": (basestring, False)
-
+        "PostTraffic": (basestring, False),
     }
 
 
@@ -60,7 +60,7 @@ class DeploymentPreference(AWSProperty):
         "Type": (basestring, True),
         "Alarms": (list, False),
         "Hooks": (Hooks, False),
-        "Enabled": (bool, False)
+        "Enabled": (bool, False),
     }
 
 
@@ -70,7 +70,8 @@ class Function(AWSObject):
     props = {
         'Handler': (basestring, True),
         'Runtime': (basestring, True),
-        'CodeUri': ((S3Location, basestring), True),
+        'CodeUri': ((S3Location, basestring), False),
+        'InlineCode': (basestring, False),
         'FunctionName': (basestring, False),
         'Description': (basestring, False),
         'MemorySize': (validate_memory_size, False),
@@ -84,9 +85,18 @@ class Function(AWSObject):
         'Tracing': (basestring, False),
         'KmsKeyArn': (basestring, False),
         'DeadLetterQueue': (DeadLetterQueue, False),
+        'DeploymentPreference': (DeploymentPreference, False),
+        'Layers': ([basestring], False),
         'AutoPublishAlias': (basestring, False),
-        'DeploymentPreference': (DeploymentPreference, False)
+        'ReservedConcurrentExecutions': (positive_integer, False),
     }
+
+    def validate(self):
+        conds = [
+            'CodeUri',
+            'InlineCode',
+        ]
+        exactly_one(self.__class__.__name__, self.properties, conds)
 
 
 class FunctionForPackaging(Function):
@@ -100,17 +110,104 @@ class FunctionForPackaging(Function):
     props = Function.props.copy()
     props['CodeUri'] = (props['CodeUri'][0], False)
 
+    def validate(self):
+        pass
+
+
+class CognitoAuthIdentity(AWSProperty):
+    props = {
+        'Header': (basestring, False),
+        'ValidationExpression': (basestring, False),
+    }
+
+
+class LambdaTokenAuthIdentity(AWSProperty):
+    props = {
+        'Header': (basestring, False),
+        'ValidationExpression': (basestring, False),
+        'ReauthorizeEvery': (basestring, False),
+    }
+
+
+class LambdaRequestAuthIdentity(AWSProperty):
+    props = {
+        'Headers': ([basestring], False),
+        'QueryStrings': ([basestring], False),
+        'StageVariables': ([basestring], False),
+        'Context': ([basestring], False),
+        'ReauthorizeEvery': (basestring, False),
+    }
+
+
+class CognitoAuth(AWSProperty):
+    props = {
+        'UserPoolArn': (basestring, False),
+        'Identity': (CognitoAuthIdentity, False),
+    }
+
+
+class LambdaTokenAuth(AWSProperty):
+    props = {
+        'FunctionPayloadType': (basestring, False),
+        'FunctionArn': (basestring, False),
+        'FunctionInvokeRole': (basestring, False),
+        'Identity': (LambdaTokenAuthIdentity, False),
+    }
+
+
+class LambdaRequestAuth(AWSProperty):
+    props = {
+        'FunctionPayloadType': (basestring, False),
+        'FunctionArn': (basestring, False),
+        'FunctionInvokeRole': (basestring, False),
+        'Identity': (LambdaRequestAuthIdentity, False),
+    }
+
+
+class Authorizers(AWSProperty):
+    props = {
+        'DefaultAuthorizer': (basestring, False),
+        'CognitoAuth': (CognitoAuth, False),
+        'LambdaTokenAuth': (LambdaTokenAuth, False),
+        'LambdaRequestAuth': (LambdaRequestAuth, False),
+    }
+
+
+class Auth(AWSProperty):
+    props = {
+        'DefaultAuthorizer': (basestring, False),
+        'Authorizers': (Authorizers, False),
+    }
+
+
+class Cors(AWSProperty):
+    props = {
+        'AllowCredentials': (basestring, False),
+        'AllowHeaders': (basestring, False),
+        'AllowMethods': (basestring, False),
+        'AllowOrigin': (basestring, True),
+        'MaxAge': (basestring, False),
+    }
+
 
 class Api(AWSObject):
     resource_type = "AWS::Serverless::Api"
 
     props = {
-        'StageName': (basestring, True),
-        'Name': (basestring, False),
-        'DefinitionBody': (dict, False),
-        'DefinitionUri': (basestring, False),
+        'AccessLogSetting': (AccessLogSetting, False),
+        'Auth': (Auth, False),
+        'BinaryMediaTypes': ([basestring], False),
         'CacheClusterEnabled': (bool, False),
         'CacheClusterSize': (basestring, False),
+        'CanarySetting': (CanarySetting, False),
+        'Cors': ((basestring, Cors), False),
+        'DefinitionBody': (dict, False),
+        'DefinitionUri': (basestring, False),
+        'EndpointConfiguration': (basestring, False),
+        'MethodSetting': (MethodSetting, False),
+        'Name': (basestring, False),
+        'StageName': (basestring, True),
+        "TracingEnabled": (bool, False),
         'Variables': (dict, False),
     }
 
@@ -138,6 +235,19 @@ class SimpleTable(AWSObject):
         'SSESpecification': (SSESpecification, False),
         'Tags': (dict, False),
         'TableName': (basestring, False),
+    }
+
+
+class LayerVersion(AWSObject):
+    resource_type = "AWS::Serverless::LayerVersion"
+
+    props = {
+        'CompatibleRuntimes': ([basestring], False),
+        'ContentUri': ((S3Location, basestring), True),
+        'Description': (basestring, False),
+        'LayerName': (basestring, False),
+        'LicenseInfo': (basestring, False),
+        'RetentionPolicy': (basestring, False),
     }
 
 

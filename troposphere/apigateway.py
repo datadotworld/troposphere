@@ -48,7 +48,8 @@ class ApiKey(AWSObject):
         "Enabled": (boolean, False),
         "GenerateDistinctId": (boolean, False),
         "Name": (basestring, False),
-        "StageKeys": ([StageKey], False)
+        "StageKeys": ([StageKey], False),
+        "Value": (basestring, False)
     }
 
 
@@ -301,7 +302,7 @@ class Model(AWSObject):
         name = 'Schema'
         if name in self.properties:
             schema = self.properties.get(name)
-            self.properties[name] = json_checker(name, schema)
+            self.properties[name] = json_checker(schema)
 
 
 class RequestValidator(AWSObject):
@@ -358,7 +359,7 @@ class Stage(AWSObject):
     resource_type = "AWS::ApiGateway::Stage"
 
     props = {
-        "AccesLogSetting": (AccessLogSetting, False),
+        "AccessLogSetting": (AccessLogSetting, False),
         "CacheClusterEnabled": (bool, False),
         "CacheClusterSize": (basestring, False),
         "CanarySetting": (StageCanarySetting, False),

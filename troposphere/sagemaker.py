@@ -60,6 +60,7 @@ class Model(AWSObject):
     props = {
         'ExecutionRoleArn': (basestring, True),
         'PrimaryContainer': (ContainerDefinition, True),
+        'Containers': ([ContainerDefinition], False),
         'ModelName': (basestring, False),
         'VpcConfig': (VpcConfig, False),
         'Tags': (Tags, False)
@@ -86,13 +87,14 @@ class NotebookInstance(AWSObject):
     resource_type = "AWS::SageMaker::NotebookInstance"
 
     props = {
-        'KmsKeyId': (basestring, False),
         'DirectInternetAccess': (basestring, False),
-        'SubnetId': (basestring, False),
-        'NotebookInstanceName': (basestring, False),
         'InstanceType': (basestring, True),
+        'KmsKeyId': (basestring, False),
         'LifecycleConfigName': (basestring, False),
-        'SecurityGroupIds': ([basestring], False),
+        'NotebookInstanceName': (basestring, False),
         'RoleArn': (basestring, True),
-        'Tags': (Tags, False)
+        'SecurityGroupIds': ([basestring], False),
+        'SubnetId': (basestring, False),
+        'Tags': (Tags, False),
+        'VolumeSizeInGB': (integer, False),
     }
