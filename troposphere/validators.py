@@ -4,15 +4,24 @@
 # See LICENSE file for full license.
 
 import json
+import os
 from re import compile
 
 
-def boolean(x):
-    if x in [True, 1, '1', 'true', 'True']:
-        return "true"
-    if x in [False, 0, '0', 'false', 'False']:
-        return "false"
-    raise ValueError
+if os.getenv("TROPO_REAL_BOOL") in ['1', 'true', 'True']:
+    def boolean(x):
+        if x in [True, 1, '1', 'true', 'True']:
+            return True
+        if x in [False, 0, '0', 'false', 'False']:
+            return False
+        raise ValueError
+else:
+    def boolean(x):
+        if x in [True, 1, '1', 'true', 'True']:
+            return "true"
+        if x in [False, 0, '0', 'false', 'False']:
+            return "false"
+        raise ValueError
 
 
 def integer(x):
@@ -197,8 +206,11 @@ def iam_group_name(group_name):
 def one_of(class_name, properties, property, conditionals):
     if properties.get(property) not in conditionals:
         raise ValueError(
+            # Ensure we handle None as a valid value
             '%s.%s must be one of: "%s"' % (
-                class_name, property, ', '.join(conditionals)
+                class_name, property, ', '.join(
+                    condition for condition in conditionals if condition
+                )
             )
         )
 
@@ -470,3 +482,33 @@ def priceclass_type(price_class):
             )
         )
     return(price_class)
+
+
+def ecs_proxy_type(proxy_type):
+    valid_types = ['APPMESH']
+    if proxy_type not in valid_types:
+        raise ValueError(
+            'Type must be one of: "%s"' % (
+                ', '.join(valid_types)
+            )
+        )
+    return(proxy_type)
+
+
+def backup_vault_name(name):
+    vault_name_re = compile(r'^[a-zA-Z0-9\-\_\.]{1,50}$')  # noqa
+    if vault_name_re.match(name):
+        return name
+    else:
+        raise ValueError("%s is not a valid backup vault name" % name)
+
+
+def waf_action_type(action):
+    valid_actions = ['ALLOW', 'BLOCK', 'COUNT']
+    if action not in valid_actions:
+        raise ValueError(
+            'Type must be one of: "%s"' % (
+                ', '.join(valid_actions)
+            )
+        )
+    return action

@@ -1,11 +1,10 @@
 .PHONY: 2to3 3to2 spec test
 
-PYDIRS=setup.py examples tests troposphere
+PYDIRS=setup.py examples scripts tests troposphere
 
 test:
-	pycodestyle ${PYDIRS}
-	pyflakes ${PYDIRS}
-	python setup.py test
+	flake8 ${PYDIRS}
+	TROPO_REAL_BOOL=true python setup.py test
 
 spec:
 	curl -O https://d1uauaxba7bl26.cloudfront.net/latest/CloudFormationResourceSpecification.zip
@@ -13,6 +12,10 @@ spec:
 	mkdir spec
 	unzip -d spec CloudFormationResourceSpecification.zip
 	rm CloudFormationResourceSpecification.zip
+
+spec2:
+	curl -O --compress https://d1uauaxba7bl26.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json
+	/bin/echo -n "Downloaded version: " && jq .ResourceSpecificationVersion CloudFormationResourceSpecification.json
 
 2to3:
 	2to3 -n -w examples > 2to3-examples.patch
@@ -25,7 +28,7 @@ spec:
 release-test:
 	python setup.py sdist
 	make release-test-27
-	make release-test-37
+	make release-test-38
 
 p27dir=p27
 release-test-27:
@@ -38,16 +41,16 @@ release-test-27:
 	deactivate && \
 	rm -rf ${p27dir}
 
-p37dir=p37
-release-test-37:
-	@echo "Python 3.7 test"
+p38dir=p38
+release-test-38:
+	@echo "Python 3.8 test"
 	ver=`python -c 'import troposphere; print troposphere.__version__'` && \
-	rm -rf ${p37dir} && \
-	python3.7 -m venv ${p37dir} && \
-	. ${p37dir}/bin/activate && \
-	pip3.7 install dist/troposphere-$${ver}.tar.gz && \
+	rm -rf ${p38dir} && \
+	python3.8 -m venv ${p38dir} && \
+	. ${p38dir}/bin/activate && \
+	pip3.8 install dist/troposphere-$${ver}.tar.gz && \
 	deactivate && \
-	rm -rf ${p37dir}
+	rm -rf ${p38dir}
 
 clean:
-	rm -rf ${p27dir} ${p37dir} troposphere.egg-info
+	rm -rf ${p27dir} ${p38dir} troposphere.egg-info

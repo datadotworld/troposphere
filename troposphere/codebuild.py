@@ -149,6 +149,7 @@ class ProjectCache(AWSProperty):
     def validate(self):
         valid_types = [
             'NO_CACHE',
+            'LOCAL',
             'S3',
         ]
         cache_type = self.properties.get('Type')
@@ -157,11 +158,18 @@ class ProjectCache(AWSProperty):
                              ','.join(valid_types))
 
 
+class GitSubmodulesConfig(AWSProperty):
+    props = {
+        'FetchSubmodules': (boolean, True),
+    }
+
+
 class Source(AWSProperty):
     props = {
         'Auth': (SourceAuth, False),
         'BuildSpec': (basestring, False),
         'GitCloneDepth': (positive_integer, False),
+        'GitSubmodulesConfig': (GitSubmodulesConfig, False),
         'InsecureSsl': (boolean, False),
         'Location': (basestring, False),
         'ReportBuildStatus': (boolean, False),
@@ -229,8 +237,30 @@ class WebhookFilter(AWSProperty):
 class ProjectTriggers(AWSProperty):
     props = {
         'Webhook': (boolean, False),
-        'FilterGroups': ([WebhookFilter], False),
+        'FilterGroups': (list, False)
     }
+
+    def validate(self):
+        """ FilterGroups, if set, needs to be a list of a list of
+        WebhookFilters
+        """
+        filter_groups = self.properties.get('FilterGroups')
+        if filter_groups is not None:
+            if not isinstance(filter_groups, list):
+                self._raise_type('FilterGroups', filter_groups, list)
+
+            for counti, elem in enumerate(filter_groups):
+                if not isinstance(elem, list):
+                    self._raise_type(
+                        'FilterGroups[{}]'.format(counti),
+                        filter_groups[counti], list
+                    )
+                for countj, hook in enumerate(filter_groups[counti]):
+                    if not isinstance(hook, WebhookFilter):
+                        self._raise_type(
+                            'FilterGroups[{}][{}]'.format(counti, countj),
+                            hook, WebhookFilter
+                        )
 
 
 def validate_status(status):
@@ -259,6 +289,7 @@ class CloudWatchLogs(AWSProperty):
 
 class S3Logs(AWSProperty):
     props = {
+        "EncryptionDisabled": (boolean, False),
         "Status": (validate_status, True),
         "Location": (basestring, False)
     }
@@ -268,6 +299,13 @@ class LogsConfig(AWSProperty):
     props = {
         'CloudWatchLogs': (CloudWatchLogs, False),
         'S3Logs': (S3Logs, False)
+    }
+
+
+class ProjectSourceVersion(AWSProperty):
+    props = {
+        'SourceIdentifier': (basestring, True),
+        'SourceVersion': (basestring, False),
     }
 
 
@@ -282,11 +320,13 @@ class Project(AWSObject):
         'EncryptionKey': (basestring, False),
         'Environment': (Environment, True),
         "LogsConfig": (LogsConfig, False),
-        'Name': (basestring, True),
+        'Name': (basestring, False),
         'SecondaryArtifacts': ([Artifacts], False),
+        'SecondarySourceVersions': ([ProjectSourceVersion], False),
         'SecondarySources': ([Source], False),
         'ServiceRole': (basestring, True),
         'Source': (Source, True),
+        'SourceVersion': (basestring, False),
         'Tags': (Tags, False),
         'TimeoutInMinutes': (integer, False),
         'Triggers': (ProjectTriggers, False),
