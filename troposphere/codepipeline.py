@@ -3,7 +3,7 @@
 #
 # See LICENSE file for full license.
 
-from . import AWSObject, AWSProperty
+from . import AWSObject, AWSProperty, Tags
 from .validators import boolean, integer
 
 
@@ -98,6 +98,7 @@ class Actions(AWSProperty):
         'Configuration': (dict, False),
         'InputArtifacts': ([InputArtifacts], False),
         'Name': (basestring, True),
+        'Namespace': (basestring, False),
         'OutputArtifacts': ([OutputArtifacts], False),
         'Region': (basestring, False),
         'RoleArn': (basestring, False),
@@ -123,7 +124,8 @@ class CustomActionType(AWSObject):
         'OutputArtifactDetails': (ArtifactDetails, True),
         'Provider': (basestring, True),
         'Settings': (Settings, False),
-        'Version': (basestring, False)
+        'Tags': (Tags, False),
+        'Version': (basestring, False),
     }
 
 
@@ -138,7 +140,8 @@ class Pipeline(AWSObject):
         'Name': (basestring, False),
         'RestartExecutionOnUpdate': (boolean, False),
         'RoleArn': (basestring, True),
-        'Stages': ([Stages], True)
+        'Stages': ([Stages], True),
+        'Tags': (Tags, False),
     }
 
 

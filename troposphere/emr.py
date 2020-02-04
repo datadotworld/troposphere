@@ -12,7 +12,7 @@ from .validators import (
 CHANGE_IN_CAPACITY = 'CHANGE_IN_CAPACITY'
 PERCENT_CHANGE_IN_CAPACITY = 'PERCENT_CHANGE_IN_CAPACITY'
 EXACT_CAPACITY = 'EXACT_CAPACITY'
-ACTIONS_ON_FAILURE = ('TERMINATE_CLUSTER', 'CANCEL_AND_WAIT',
+ACTIONS_ON_FAILURE = ('TERMINATE_CLUSTER', 'CANCEL_AND_WAIT', 'CONTINUE',
                       'TERMINATE_JOB_FLOW')
 
 
@@ -310,6 +310,7 @@ class JobFlowInstancesConfig(AWSProperty):
         'CoreInstanceGroup': (InstanceGroupConfigProperty, False),
         'Ec2KeyName': (basestring, False),
         'Ec2SubnetId': (basestring, False),
+        'Ec2SubnetIds': ([basestring], False),
         'EmrManagedMasterSecurityGroup': (basestring, False),
         'EmrManagedSlaveSecurityGroup': (basestring, False),
         'HadoopVersion': (basestring, False),

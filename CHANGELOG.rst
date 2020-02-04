@@ -1,3 +1,269 @@
+2.5.3 (2019*12*08)
+------------------
+* Switch to using the gzip version of the Resource Specification
+* Amend RefreshTokenValidity to match Cognito changes. (#1498)
+* Update placement object (#1501)
+* Add hyperlinks to AWS resource types (#1499)
+* Added missing CrawlerName field to Glue Action and Condition objects (#1500)
+* Fix multiple mappings being overwritten (#1041)
+* Cognito is missing UserPoolResourceServer (#1509)
+* Add EnabledMfas to cognito UserPool Object. (#1507)
+* Cognito EnabledMfa needs to be a list of strings (#1511)
+* Make Python 3.8 support official (#1513)
+* Added missing rds scaling configuration capacity (#1514)
+* Add AllocationStrategy parameter for AWS::Batch::ComputeEnvironment ComputeResources (#1515)
+* Add SelfManagedActiveDirectoryConfiguration property to fsx (#1516)
+* Add logging capability to EKS Cloudwatch (#1512)
+* Fix some flake8 breakage due to recent commits
+* Output the resource specification version after downloading
+* Add EventBus class in events script (#1518)
+* Add new EC2 resources per 2019-10-03 update
+* Add new cognito resources per 2019-10-03 update
+* Add PlannedBudgetLimits to Budgets::Budget BudgetData
+* Add AWS::Pinpoint
+* Adding missing property for guardduty FindingPublishing (#1517)
+* Support for API Gateway SecurityPolicy (#1521)
+* Add AWS::GameLift
+* Update AppStream per 2019-11-07 update
+* Add AWS::CodeStarNotifications and AWS::MediaConvert
+* Update AppMesh per 2019-11-04 update
+* Add DynamoDBTargets and CatalogTargets to Glue::Crawler
+* Update ApiGateway resources per 2019-11-31 changes
+* Add Tags to CodePipeline CustomActionType and Pipeline
+* Updates to Amplify per 2019-10-31 changes
+* Update Events per 2019-11-31 changes
+* Add InferenceAccelerator to ECS::TaskDefinitiion per 2019-10-31 change
+* Add LogPublishingOptions to Elasticsearch::Domain
+* Add Tags to SNS::Topic per 2019-11-31 changes
+* Add WAF Action Type validator (#1524)
+* Adding AWS::EKS::Nodegroup resource, per Nov 18 2019 update (#1529)
+* Adding CpuOptions support for LaunchTemplateData (#1531)
+* Update AppSync per 2019-11-21 changes
+* Update SNS per 2019-11-21 changes
+* Update OpsWorksCM per 2019-11-21 changes
+* Update IAM per 2019-11-21 changes
+* Update Glue per 2019-11-21 changes
+* Update Elasticsearch per 2019-11-21 changes
+* Update EC2 per 2019-11-21 changes
+* Update Cognito per 2019-11-21 changes
+* Update ApiGateway per 2019-11-21 changes
+* Update RDS per 2019-11-21 changes
+* Update ECS per 2019-11-21 changes
+* Update CloudWatch per 2019-11-21 changes
+* Update ECS per 2019-11-25 changes
+* Update per 2019-11 changes
+* Update CodePipeline per 2019-11-25 changes
+* Add ProvisionedConcurrencyConfiguration for Lambda alias and version (#1533)
+* Add AWS::EventSchemas
+* Add AWS::AccessAnalyzer
+* Add S3::AccessPoint per 2019-12-03 update
+* Update StepFunctions per 2019-12-03 update
+* Update ApiGatewayV2 per 2019-12-04 changes
+
+2.5.2 (2019*09*29)
+------------------
+* Use double validator instead of a raw float for Double types (#1485)
+* Add PythonVersion to Glue JobCommand (#1486)
+* ImageId in EC2 LaunchTemplateData is no longer required (#1487)
+* Add KmsKeyID prop to AWS::ElastiCache::ReplicationGroup, per 2019 Aug 30 update (#1488)
+* Add threshold metric to CloudWatch::Alarm (#1489)
+* Fix naming of parameters in FindInMap helper. (#1491)
+* Add missing EnableNonSecurity property to SSM Rule (#1493)
+* Add EnableCloudwatchLogsExports to Neptune::DBCluster
+* Update AppMesh::Route properties per 2019-08-29 update
+* Add Config::OrganizationConfigRule resource
+* Add ZoneAwarenessConfig to Elasticsearch ElasticsearchClusterConfig
+* Add AWS::QLDB
+* Update RDS resources per 2019-08-29 update
+* Travis CI: Add flake8 which is a superset of pycodestyle and pyflakes (#1470)
+* Run flake8 via "make test" (#1470)
+* Add SourceVersion to CodeBuild::Project (#1495)
+* Add new Properties to SSM::Parameter (#1496)
+* iam: Add Description field to Role (#1497)
+* Add MaximumBatchingWindowInSeconds to Lambda::EventSourceMapping
+* Update Events::Rule EcsParameters per 2019-08-29 changes
+* Update ECS::TaskDefinition per 2019-08-29 changes
+* Update EC2::Instance per 2019-08-29 changes
+* Update DynamoDB::Table per 2019-08-29 changes
+* Update ApplicationAutoScaling::ScalableTarget per 2019-08-29 changes
+* Update DocDB::DBCluster per 2019-09-26 changes
+* Update Glue per 2019-09-26 changes
+
+2.5.1 (2019*08*25)
+------------------
+* Fix missing required field in CodeContent object (#1472)
+* updated crawler tag attribute to match aws cloudformation doc (#1482)
+* Change Tags to dict in Glue resources (#1482)
+* Update gen script to understand "Json" Tags to be a dict
+* Fixed a typo in the ClientBroker's value (#1480)
+* Fix test output in MskCluster.template from issue #1480
+* Update MaintenanceWindow Properties (#1476)
+* Modified AdditionalAuthenticationProviders field in GraphQlApi to be a list (#1479)
+* Add new properties to Glue::Job (#1484)
+* Update missing properties in cognito (#1475)
+* Add AWS::LakeFormation
+* Update dms properties
+* Add SageMaker::Workteam
+* Add SplitTunnel to EC2::ClientVpnEndpoint
+* Add Tags properties to some Greengrass resources
+* Add ExcludeVerboseContent to AppSync LogConfig property type
+* Add AWS::ManagedBlockchain
+* Add Glue::MLTransform resource
+* Add AWS::CodeStar
+* Add LinuxParameters to Batch::ContainerProperties
+
+2.5.0 (2019*07*28)
+------------------
+* Return real booleans in the output (#1409)
+
+  Note: it was noted in #1136 that cfn-lint prefers real booleans. Since this
+  may break existing scripts/updates, it was implemented via #1409 via an
+  environment variable: TROPO_REAL_BOOL=true
+
+  At some point troposphere likely will make this a warning and default to
+  real booleans. Thanks for @michel-k and @ikben for implementing it.
+
+* Add AWS::SecurityHub
+* EC2: Update SpotOptions properties
+* Merge branch 'master' into feature/rules
+* Add Template.add_rule() function to be consistent with the Template API
+* Write doc for add_rule()
+* Adapt test case to the add_rule() interface
+* Add duplicate name check in add_rule
+* Add Tags to ECR Repository definition (#1444)
+* Merge pull request #1412 from vrtdev/feature/rules
+* EBSBlockDevice supports KmsKeyId (#1451)
+* Add Medialive resources (#1447)
+* Fix RecoveryPointTags/BackupVaultTags type for AWS Backup resources (#1448)
+* Add Code property to Codecommit (#1454)
+* Add support for LicenseSpecification for LaunchTemplateData (#1458)
+* Add AWS::MediaLive to README
+* Tweak to allow "make test" work with the real boolean change (#1409)
+* Prefer awacs.aws.PolicyDocument over awacs.aws.Policy (#1338)
+* Add EFS FileSystem LifecyclePolicies (#1456)
+* Fix Transfer::User SshPublicKeys type (#1459)
+* Fix TemporaryPasswordValidityDays type (#1460)
+* Add Cloudwatch AnomalyDetector resource (#1461)
+* Update ASK to the latest AWS documentation (#1467)
+* Adding AllowMajorVersionUpgrade to DMS Replication Instance (#1464)
+* Change ElastiCache ReplicaAvailabilityZones from string to string list (#1468)
+* Add AmazonMQ::Broker EncryptionOptions property
+* Update AWS::Amplify resources
+* Add AWS::IoTEvents
+* Add Tags to AWS::CodeCommit::Repository
+* Add EmailSendingAccount to Cognito::UserPool EmailConfiguration
+
+2.4.9 (2019*06*26)
+------------------
+* add tag to role (#1441)
+* Fix regression in EC2::VPNConnection - add list back to Tags (#1442)
+
+2.4.8 (2019*06*23)
+------------------
+* [iot1click] resource_type should be a string, not tuple (#1402)
+* Fix Parameters on AWS::Batch::JobDefinition (#1404)
+* Add new wafregional resources (#1406)
+* Add AppMesh::VirtualRouter (#1410)
+* Add InterfaceType to EC2 LaunchTemplate (#1405)
+* Adding AWS::Transfer resources, per 2019 May 23 update (#1407)
+* Adding AWS::PinpointEmail, per 2019 May 23 update (#1408)
+* Add missing LOCAL caching option (#1413)
+* Allow for AWSHelperFn objects in Tags (#1403)
+* Fix bug where FilterGroups were required, when technically they are not (#1424)
+* Adding AWS::Backup resources from May 23, 2019 update (#1419)
+* adding missing X-ray activation property for AWS::ApiGateway::Stage (#1420)
+* Change add_description to set_description in all examples (#1425)
+* Add support for httpHeaderConfig (#1426)
+* Add Config attributes to ELBV2 Condition (#1426)
+* Update ECS resources from June 13, 2019 update (#1430)
+* Add ClientVPN resources (#1431)
+* Change HeartbeatTimeout type to integer (#1415) (#1432)
+* Add transit gateway ID to Route (#1433)
+* Add Sagemaker::CodeRepository (#1422)
+* Adding SageMaker NotebookInstance properties (#1421)
+* Update ElasticLoadBalancingV2 ListenerRule (#1427)
+* Update DLM rule interval values (#1333) (#1437)
+* Add resources for Amazon MSK, from June 13, 2019 update (#1436)
+* Add HostRecovery property to EC2::Host
+* Add SecondarySourceVersions to CodeBuild::Project
+* Add ObjectLock* properties to S3::Bucket
+* Add Ec2SubnetIds property to EMR JobFlowInstancesConfig
+* Add AWS::Amplify
+* Adds 'ErrorOutputPrefix' to *S3DestinationConfiguration (#1439)
+* Add ServiceCatalog::StackSetConstraint and update CFProvisionedProduct
+* Add IdleDisconnectTimeoutInSeconds to AppStream::Fleet
+* Add Config::RemediationConfiguration resource
+* Add AppMesh AwsCloudMapServiceDiscovery and reformat for autogen
+* DLM: add Parameters and PolicyType properties to PolicyDetails
+* IoTAnalytics: add ContentDeliveryRules and VersioningConfiguration to Dataset
+* KinesisFirehose: updates to ExtendedS3DestinationConfiguration
+
+2.4.7 (2019*05*18)
+------------------
+* Add authenticate-cognito and authenticate-oidc to elb v2 Action's "type" validator (#1352)
+* Update the instance types in constants. (#1353)
+* Add missing Termination Policies (#1354)
+* Add Tags to various AppStream objects, per 2019 March 19 update (#1355)
+* Add new AWS::AppMesh resources, per 2019 March 28 update (#1356)
+* Add ServiceCatalog::ResourceUpdateConstraint
+* Add ResourceRequirements property to Batch::JobDefinition
+* Add an improved troposphere code generator for use with AWS spec files
+* Add a Makefile helper to download the spec file
+* Fix a pep8 issue introduced with pycodestyle 2.5.0
+* Add constants for missing rds instance types (#1365)
+* EngineAttributes should take list (#1363)
+* Added support for lambda in TargetGroup with additional validation (#1376)
+* Fix the scripts for Python3 (#1364)
+* Add #! header and print_function import
+* Add scripts directory to tests
+* Fix pycodestyle issues with scripts
+* Add HealthCheckEnabled to ElasticLoadBalancingV2::TargetGroup
+* Fixed: Codebuild Webhook Filters are to be a list of list of WebhookFilter (#1372)
+* Use enumeration in codebuild FilterGroup validate and add some tests
+* Add AWS::EC2::CapacityReservation resource (#1379)
+* Add AWS::Greengrass (#1384)
+* Add Events::EventBusPolicy (#1386)
+* Add Python 3.7 to travis testing (#1302)
+* Added ECS ProxyConfiguration, DependsOn,  StartTimeout and StopTimeout parameters (#1382)
+* Username property in DMS::Endpoint class should not be required (#1387)
+* Fix MethodSettings on AWS::Serverless::Api (#1391)
+* Adds TmpFs prop to LinuxParameters (#1392)
+* Add SharedMemorySize property to ECS LinuxParameters (#1392)
+* Make DefinitionString and DefinitionBody mutually exclusive, but allow no definition (#1390)
+* Add T3a, M/R5ad, and I3en instances to constants (#1393)
+* Fixed issue #1394 wrong appmesh Listener property and #1396 dependson should be a type list and #1397 proxy props should be list (#1395)
+* Add ApiGatewayV2 ApiMapping and DomainName resources
+* Added missing container name propery (#1398)
+* Update region/az information (#1399)
+* Add missing Role property for serverless DeploymentPreference (#1400)
+* Add DisableTemplateValidation to ServiceCatalog ProvisioningArtifactProperties
+* Add AWS::MediaStore
+* Add multiple changes to AWS::Glue
+* Add AppSync GraphQLApi changes
+* Add TemporaryPasswordValidityDays to Cognito PasswordPolicy
+
+2.4.6 (2019*03*20)
+------------------
+* Discourage usage of Python 3.4 (#1326)
+* Remove validation for ElastiCache::ReplicationGroup some properties (#1063)
+* Add auth configs for ElasticLoadBalancingV2::ListenerRule actions
+* Add new RDS DBCluster and DBInstance properties (#1329)
+* Add new Elasticsearch Domain property (#1330)
+* Add new ApiGateway Apikey property (#1331)
+* Add new Codebuild ProjectCache property (#1332)
+* Add new AWS::RAM and AWS::RoboMaker resources
+* Add psuedo-parameter Ref for AWS::Partition (#1334)
+* Add SageMaker::NotebookInstance VolumeSizeInGB property
+* Add missing properties in SSM::PatchBaseline (#1339)
+* Add Tags to StepFunctions objects, per 2019 March 07 update (#1340)
+* Update valid values for emr.StepConfig ActionOnFailure (#1350)
+* Add RootAccess prop to AWS::SageMaker::NotebookInstance, per 2019 March 14 update (#1342)
+* Add prop to AWS::OpsWorksCM::Server per 2019 March 14 update (#1343)
+* Add new AWS::CodeBuild::Project props, per 2019 March 14 update (#1344)
+* Fix EC2 SpotFleet LoadBalancersConfig TargetGroupConfig (#1346)
+* Add URLSuffix Ref (#1347)
+* CodeBuild::Project Name is not required (#1348)
+
 2.4.5 (2019*02*19)
 ------------------
 

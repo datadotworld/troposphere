@@ -344,11 +344,15 @@ class Server(AWSObject):
     resource_type = "AWS::OpsWorksCM::Server"
 
     props = {
+        'AssociatePublicIpAddress': (boolean, False),
         'BackupId': (basestring, False),
         'BackupRetentionCount': (integer, False),
+        'CustomCertificate': (basestring, False),
+        'CustomDomain': (basestring, False),
+        'CustomPrivateKey': (basestring, False),
         'DisableAutomatedBackup': (boolean, False),
         'Engine': (basestring, False),
-        'EngineAttributes': (EngineAttribute, False),
+        'EngineAttributes': ([EngineAttribute], False),
         'EngineModel': (basestring, False),
         'EngineVersion': (basestring, False),
         'InstanceProfileArn': (basestring, True),

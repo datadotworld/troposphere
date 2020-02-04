@@ -19,7 +19,9 @@ Default = 'Default'
 OldestInstance = 'OldestInstance'
 NewestInstance = 'NewestInstance'
 OldestLaunchConfiguration = 'OldestLaunchConfiguration'
+OldestLaunchTemplate = 'OldestLaunchTemplate'
 ClosestToNextInstanceHour = 'ClosestToNextInstanceHour'
+AllocationStrategy = 'AllocationStrategy'
 
 
 class Tag(AWSHelperFn):
@@ -61,7 +63,7 @@ class Tags(AWSHelperFn):
 class LifecycleHookSpecification(AWSProperty):
     props = {
         'DefaultResult': (basestring, False),
-        'HeartbeatTimeout': (basestring, False),
+        'HeartbeatTimeout': (integer, False),
         'LifecycleHookName': (basestring, True),
         'LifecycleTransition': (basestring, True),
         'NotificationMetadata': (basestring, False),
