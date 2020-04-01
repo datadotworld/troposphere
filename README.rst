@@ -81,22 +81,7 @@ A simple example to create an instance would look like this:
             }
         }
     }
-
-
-A simple example to create an instance (YAML) would look like this:
-
-.. code:: python
-
-    >>> from troposphere import Ref, Template
-    >>> import troposphere.ec2 as ec2
-    >>> t = Template()
-    >>> instance = ec2.Instance("myinstance")
-    >>> instance.ImageId = "ami-951945d0"
-    >>> instance.InstanceType = "t1.micro"
-    >>> t.add_resource(instance)
-    <troposphere.ec2.Instance object at 0x101bf3390>
     >>> print(t.to_yaml())
-
     Resources:
         myinstance:
             Properties:
@@ -161,10 +146,12 @@ Currently supported AWS resource types
 ======================================
 
 - `AWS::AccessAnalyzer`_
+- `AWS::ACMPCA`_
 - `AWS::AmazonMQ`_
 - `AWS::Amplify`_
 - `AWS::ApiGateway`_
 - `AWS::ApiGatewayV2`_
+- `AWS::AppConfig`_
 - `AWS::AppMesh`_
 - `AWS::AppStream`_
 - `AWS::AppSync`_
@@ -208,10 +195,12 @@ Currently supported AWS resource types
 - `AWS::Elasticsearch`_
 - `AWS::Events`_
 - `AWS::EventSchemas`_
+- `AWS::FMS`_
 - `AWS::FSx`_
 - `AWS::GameLift`_
 - `AWS::Glue`_
 - `AWS::Greengrass`_
+- `AWS::GroundStation`
 - `AWS::GuardDuty`_
 - `AWS::IAM`_
 - `AWS::Inspector`_
@@ -260,31 +249,28 @@ Currently supported AWS resource types
 - `AWS::Transfer`_
 - `AWS::WAF`_
 - `AWS::WAFRegional`_
+- `AWS::WAFv2`_
 - `AWS::WorkSpaces`_
 
 Currently supported OpenStack resource types
 ============================================
 
-- OS::Neutron::Firewall
-- OS::Neutron::FirewallPolicy
-- OS::Neutron::FirewallRule
-- OS::Neutron::FloatingIP
-- OS::Neutron::FloatingIPAssociation
+- `OS::Neutron::Firewall`_
+- `OS::Neutron::FirewallPolicy`_
+- `OS::Neutron::FirewallRule`_
+- `OS::Neutron::FloatingIP`_
+- `OS::Neutron::FloatingIPAssociation`_
 - OS::Neutron::HealthMonitor
 - OS::Neutron::Pool
 - OS::Neutron::LoadBalancer
-- OS::Neutron::Net
+- `OS::Neutron::Net`_
 - OS::Neutron::PoolMember
-- OS::Neutron::Port
-- OS::Neutron::SecurityGroup
+- `OS::Neutron::Port`_
+- `OS::Neutron::SecurityGroup`_
 - OS::Nova::FloatingIP
 - OS::Nova::FloatingIPAssociation
-- OS::Nova::KeyPair
-- OS::Nova::Server
-
-Todo:
-
-- Add additional validity checks
+- `OS::Nova::KeyPair`_
+- `OS::Nova::Server`_
 
 Duplicating a single instance sample would look like this
 =========================================================
@@ -384,10 +370,12 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`BSD 2-Clause license`: http://opensource.org/licenses/BSD-2-Clause
 
 .. _`AWS::AccessAnalyzer`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AccessAnalyzer.html
+.. _`AWS::ACMPCA`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ACMPCA.html
 .. _`AWS::AmazonMQ`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AmazonMQ.html
 .. _`AWS::Amplify`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Amplify.html
 .. _`AWS::ApiGateway`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ApiGateway.html
 .. _`AWS::ApiGatewayV2`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ApiGatewayV2.html
+.. _`AWS::AppConfig`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AppConfig.html
 .. _`AWS::AppMesh`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AppMesh.html
 .. _`AWS::AppStream`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AppStream.html
 .. _`AWS::AppSync`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AppSync.html
@@ -431,10 +419,12 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`AWS::Elasticsearch`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Elasticsearch.html
 .. _`AWS::Events`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Events.html
 .. _`AWS::EventSchemas`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_EventSchemas.html
+.. _`AWS::FMS`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_FMS.html
 .. _`AWS::FSx`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_FSx.html
 .. _`AWS::GameLift`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_GameLift.html
 .. _`AWS::Glue`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Glue.html
 .. _`AWS::Greengrass`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Greengrass.html
+.. _`AWS::GroundStation`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_GroundStation.html
 .. _`AWS::GuardDuty`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_GuardDuty.html
 .. _`AWS::IAM`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_IAM.html
 .. _`AWS::Inspector`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Inspector.html
@@ -476,12 +466,23 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`AWS::SageMaker`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SageMaker.html
 .. _`AWS::SecretsManager`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SecretsManager.html
 .. _`AWS::SecurityHub`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SecurityHub.html
-.. _`AWS::Serverless`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Serverless.html
+.. _`AWS::Serverless`: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-resources-and-properties.html
 .. _`AWS::ServiceCatalog`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ServiceCatalog.html
 .. _`AWS::ServiceDiscovery`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ServiceDiscovery.html
 .. _`AWS::StepFunctions`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_StepFunctions.html
 .. _`AWS::Transfer`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Transfer.html
 .. _`AWS::WAF`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_WAF.html
 .. _`AWS::WAFRegional`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_WAFRegional.html
+.. _`AWS::WAFv2`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_WAFv2.html
 .. _`AWS::WorkSpaces`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_WorkSpaces.html
 
+.. _`OS::Neutron::Firewall`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Neutron::Firewall
+.. _`OS::Neutron::FirewallPolicy`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Neutron::FirewallPolicy
+.. _`OS::Neutron::FirewallRule`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Neutron::FirewallRule
+.. _`OS::Neutron::FloatingIP`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Neutron::FloatingIP
+.. _`OS::Neutron::FloatingIPAssociation`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Neutron::FloatingIPAssociation
+.. _`OS::Neutron::Net`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Neutron::Net
+.. _`OS::Neutron::Port`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Neutron::Port
+.. _`OS::Neutron::SecurityGroup`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Neutron::SecurityGroup
+.. _`OS::Nova::KeyPair`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Nova::KeyPair
+.. _`OS::Nova::Server`: https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Nova::Server

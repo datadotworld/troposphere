@@ -11,6 +11,7 @@ VALID_IMAGE_PULL_CREDENTIALS = ('CODEBUILD', 'SERVICE_ROLE')
 VALID_CREDENTIAL_PROVIDERS = ('SECRETS_MANAGER')
 VALID_WEBHOOKFILTER_TYPES = ('EVENT', 'ACTOR_ACCOUNT_ID', 'HEAD_REF',
                              'BASE_REF', 'FILE_PATH')
+VALID_PROJECTFILESYSTEMLOCATION_TYPE = ('EFS')
 
 
 def validate_image_pull_credentials(image_pull_credentials):
@@ -38,6 +39,15 @@ def validate_webhookfilter_type(webhookfilter_type):
         raise ValueError("Project Webhookfilter Type must be one of: %s" %
                          ", ".join(VALID_WEBHOOKFILTER_TYPES))
     return webhookfilter_type
+
+
+def validate_projectfilesystemlocation_type(projectfilesystemlocation_type):
+    """Validate ProjectFileSystemLocation type property"""
+
+    if projectfilesystemlocation_type not in VALID_PROJECTFILESYSTEMLOCATION_TYPE:  # NOQA
+        raise ValueError("ProjectFileSystemLocation Type must be one of: %s" %  # NOQA
+                         ", ".join(VALID_PROJECTFILESYSTEMLOCATION_TYPE))
+    return projectfilesystemlocation_type
 
 
 class SourceAuth(AWSProperty):
@@ -309,6 +319,16 @@ class ProjectSourceVersion(AWSProperty):
     }
 
 
+class ProjectFileSystemLocation(AWSProperty):
+    props = {
+        'Identifier': (basestring, True),
+        'Location': (basestring, True),
+        'MountOptions': (basestring, False),
+        'MountPoint': (basestring, True),
+        'Type': (validate_projectfilesystemlocation_type, True),
+    }
+
+
 class Project(AWSObject):
     resource_type = "AWS::CodeBuild::Project"
 
@@ -319,8 +339,10 @@ class Project(AWSObject):
         'Description': (basestring, False),
         'EncryptionKey': (basestring, False),
         'Environment': (Environment, True),
-        "LogsConfig": (LogsConfig, False),
+        'FileSystemLocations': ([ProjectFileSystemLocation], False),
+        'LogsConfig': (LogsConfig, False),
         'Name': (basestring, False),
+        'QueuedTimeoutInMinutes': (integer, False),
         'SecondaryArtifacts': ([Artifacts], False),
         'SecondarySourceVersions': ([ProjectSourceVersion], False),
         'SecondarySources': ([Source], False),
@@ -331,4 +353,42 @@ class Project(AWSObject):
         'TimeoutInMinutes': (integer, False),
         'Triggers': (ProjectTriggers, False),
         'VpcConfig': (VpcConfig, False),
+    }
+
+
+class S3ReportExportConfig(AWSProperty):
+    props = {
+        'Bucket': (basestring, True),
+        'EncryptionDisabled': (boolean, False),
+        'EncryptionKey': (basestring, False),
+        'Packaging': (basestring, False),
+        'Path': (basestring, False),
+    }
+
+
+class ReportExportConfig(AWSProperty):
+    props = {
+        'ExportConfigType': (basestring, True),
+        'S3Destination': (S3ReportExportConfig, False),
+    }
+
+
+class ReportGroup(AWSObject):
+    resource_type = "AWS::CodeBuild::ReportGroup"
+
+    props = {
+        'ExportConfig': (ReportExportConfig, True),
+        'Name': (basestring, False),
+        'Type': (basestring, True),
+    }
+
+
+class SourceCredential(AWSObject):
+    resource_type = "AWS::CodeBuild::SourceCredential"
+
+    props = {
+        'AuthType': (basestring, True),
+        'ServerType': (basestring, True),
+        'Token': (basestring, True),
+        'Username': (basestring, False),
     }

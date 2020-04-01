@@ -17,10 +17,14 @@ VALID_DB_ENGINES = ('MySQL', 'mysql', 'oracle-se1', 'oracle-se2', 'oracle-se',
                     'oracle-ee', 'sqlserver-ee', 'sqlserver-se',
                     'sqlserver-ex', 'sqlserver-web', 'postgres', 'aurora',
                     'aurora-mysql', 'aurora-postgresql', 'mariadb')
-VALID_DB_ENGINE_MODES = ('provisioned', 'serverless')
+VALID_DB_ENGINE_MODES = ('provisioned', 'serverless', 'parallelquery',
+                         'global', 'multimaster')
 VALID_LICENSE_MODELS = ('license-included', 'bring-your-own-license',
                         'general-public-license', 'postgresql-license')
-VALID_SCALING_CONFIGURATION_CAPACITIES = (1, 2, 4, 8, 16, 32, 64, 128, 256)
+VALID_MYSQL_SCALING_CONFIGURATION_CAPACITIES = (1, 2, 4, 8, 16, 32, 64, 128,
+                                                256)
+VALID_POSTGRESL_SCALING_CONFIGURATION_CAPACITIES = (2, 4, 8, 16, 32, 64, 192,
+                                                    384)
 
 
 def validate_iops(iops):
@@ -135,12 +139,14 @@ def validate_backup_retention_period(days):
 def validate_capacity(capacity):
     """Validate ScalingConfiguration capacity for serverless DBCluster"""
 
-    if capacity not in VALID_SCALING_CONFIGURATION_CAPACITIES:
+    if capacity not in VALID_POSTGRESL_SCALING_CONFIGURATION_CAPACITIES and \
+            capacity not in VALID_MYSQL_SCALING_CONFIGURATION_CAPACITIES:
         raise ValueError(
             "ScalingConfiguration capacity must be one of: {}".format(
                 ", ".join(map(
                     str,
-                    VALID_SCALING_CONFIGURATION_CAPACITIES
+                    VALID_MYSQL_SCALING_CONFIGURATION_CAPACITIES +
+                    VALID_POSTGRESL_SCALING_CONFIGURATION_CAPACITIES
                 ))
             )
         )
@@ -172,6 +178,7 @@ class DBInstance(AWSObject):
         'AutoMinorVersionUpgrade': (boolean, False),
         'AvailabilityZone': (basestring, False),
         'BackupRetentionPeriod': (validate_backup_retention_period, False),
+        'CACertificateIdentifier': (basestring, False),
         'CharacterSetName': (basestring, False),
         'CopyTagsToSnapshot': (boolean, False),
         'DBClusterIdentifier': (basestring, False),
@@ -196,6 +203,7 @@ class DBInstance(AWSObject):
         'LicenseModel': (validate_license_model, False),
         'MasterUsername': (basestring, False),
         'MasterUserPassword': (basestring, False),
+        'MaxAllocatedStorage': (integer, False),
         'MonitoringInterval': (positive_integer, False),
         'MonitoringRoleArn': (basestring, False),
         'MultiAZ': (boolean, False),

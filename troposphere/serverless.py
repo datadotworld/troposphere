@@ -7,7 +7,8 @@ import types
 
 from . import AWSObject, AWSProperty
 from .apigateway import AccessLogSetting, CanarySetting, MethodSetting
-from .awslambda import Environment, VPCConfig, validate_memory_size
+from .awslambda import Environment, ProvisionedConcurrencyConfiguration
+from .awslambda import VPCConfig, validate_memory_size
 from .dynamodb import ProvisionedThroughput, SSESpecification
 from .s3 import Filter
 from .validators import exactly_one, positive_integer, mutually_exclusive
@@ -90,6 +91,8 @@ class Function(AWSObject):
         'Layers': ([basestring], False),
         'AutoPublishAlias': (basestring, False),
         'ReservedConcurrentExecutions': (positive_integer, False),
+        'ProvisionedConcurrencyConfig':
+            (ProvisionedConcurrencyConfiguration, False),
     }
 
     def validate(self):
@@ -174,10 +177,26 @@ class Authorizers(AWSProperty):
     }
 
 
+class ResourcePolicyStatement(AWSProperty):
+    props = {
+        'AwsAccountBlacklist': (list, False),
+        'AwsAccountWhitelist': (list, False),
+        'CustomStatements': (list, False),
+        'IpRangeBlacklist': (list, False),
+        'IpRangeWhitelist': (list, False),
+        'SourceVpcBlacklist': (list, False),
+        'SourceVpcWhitelist': (list, False),
+    }
+
+
 class Auth(AWSProperty):
     props = {
-        'DefaultAuthorizer': (basestring, False),
+        'AddDefaultAuthorizerToCorsPreflight': (bool, False),
+        'ApiKeyRequired': (bool, False),
         'Authorizers': (Authorizers, False),
+        'DefaultAuthorizer': (basestring, False),
+        'InvokeRole': (basestring, False),
+        'ResourcePolicy': (ResourcePolicyStatement, False),
     }
 
 

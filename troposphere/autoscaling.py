@@ -145,6 +145,7 @@ class InstancesDistribution(AWSProperty):
 class LaunchTemplateOverrides(AWSProperty):
     props = {
         'InstanceType': (basestring, False),
+        'WeightedCapacity': (basestring, False),
     }
 
 
@@ -204,7 +205,7 @@ class AutoScalingGroup(AWSObject):
                     min_instances = rolling_update.properties.get(
                         "MinInstancesInService", "0")
                     is_min_no_check = isinstance(
-                        min_instances, (FindInMap, Ref)
+                        min_instances, (If, FindInMap, Ref)
                     )
                     is_max_no_check = isinstance(self.MaxSize,
                                                  (If, FindInMap, Ref))
