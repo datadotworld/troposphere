@@ -58,16 +58,10 @@ class ExcludedRule(AWSProperty):
     }
 
 
-class ExcludedRules(AWSProperty):
-    props = {
-        'ExcludedRules': ([ExcludedRule], False)
-    }
-
-
 class RuleGroupReferenceStatement(AWSProperty):
     props = {
         'Arn': (basestring, False),
-        'ExcludedRules': (ExcludedRules, False)
+        'ExcludedRules': ([ExcludedRule], False)
     }
 
 
@@ -90,31 +84,31 @@ class SingleQueryArgument(AWSProperty):
     }
 
 
-class Body(AWSObject):
+class Body(AWSProperty):
     props = {
 
     }
 
 
-class Method(AWSObject):
+class Method(AWSProperty):
     props = {
 
     }
 
 
-class AllQueryArguments(AWSObject):
+class AllQueryArguments(AWSProperty):
     props = {
 
     }
 
 
-class QueryString(AWSObject):
+class QueryString(AWSProperty):
     props = {
 
     }
 
 
-class UriPath(AWSObject):
+class UriPath(AWSProperty):
     props = {
 
     }
@@ -173,15 +167,9 @@ class ByteMatchStatement(AWSProperty):
     }
 
 
-class CountryCodes(AWSProperty):
-    props = {
-        'CountryCodes': ([basestring], False)
-    }
-
-
 class GeoMatchStatement(AWSProperty):
     props = {
-        'CountryCodes': (CountryCodes, False)
+        'CountryCodes': ([basestring], False)
     }
 
 
@@ -193,7 +181,7 @@ class IPSetReferenceStatement(AWSProperty):
 
 class ManagedRuleGroupStatement(AWSProperty):
     props = {
-        'ExcludedRules': (ExcludedRules, False),
+        'ExcludedRules': ([ExcludedRule], False),
         'Name': (basestring, False),
         'VendorName': (basestring, False),
     }
@@ -215,15 +203,9 @@ class StatementThree(AWSProperty):
     }
 
 
-class StatementThrees(AWSProperty):
-    props = {
-        'StatementThrees': ([StatementThree], False)
-    }
-
-
 class AndStatementTwo(AWSProperty):
     props = {
-        'Statements': (StatementThrees, False)
+        'Statements': ([StatementThree], False)
     }
 
 
@@ -235,7 +217,7 @@ class NotStatementTwo(AWSProperty):
 
 class OrStatementTwo(AWSProperty):
     props = {
-        'Statements': (StatementThrees, False)
+        'Statements': ([StatementThree], False)
     }
 
 
@@ -267,15 +249,9 @@ class StatementTwo(AWSProperty):
     }
 
 
-class StatementTwos(AWSProperty):
-    props = {
-        'StatementTwos': ([StatementTwo], False)
-    }
-
-
 class AndStatementOne(AWSProperty):
     props = {
-        'Statements': (StatementTwos, False)
+        'Statements': ([StatementTwo], False)
     }
 
 
@@ -287,7 +263,7 @@ class NotStatementOne(AWSProperty):
 
 class OrStatementOne(AWSProperty):
     props = {
-        'Statements': (StatementTwos, False)
+        'Statements': ([StatementTwo], False)
     }
 
 
@@ -390,7 +366,7 @@ class WebACL(AWSObject):
     props = {
         'DefaultAction': (DefaultAction, False),
         'Description': (basestring, False),
-        'Name': (basestring, True),
+        'Name': (basestring, False),
         'Rules': ([WebACLRule], False),
         'Scope': (basestring, True),
         'Tags': (Tags, False),
@@ -405,21 +381,9 @@ class IPSet(AWSObject):
         'Addresses': ([basestring], False),
         'Description': (basestring, False),
         'IPAddressVersion': (validate_ipaddress_version, False),
-        'Name': (basestring, True),
+        'Name': (basestring, False),
         'Scope': (basestring, True),
         'Tags': (Tags, False),
-    }
-
-
-class Regex(AWSProperty):
-    props = {
-        'RegexString': (basestring, False)
-    }
-
-
-class RegularExpressionList(AWSProperty):
-    props = {
-        'RegularExpressionList': ([Regex], False)
     }
 
 
@@ -428,8 +392,8 @@ class RegexPatternSet(AWSObject):
 
     props = {
         'Description': (basestring, False),
-        'Name': (basestring, True),
-        'RegularExpressionList': (RegularExpressionList, False),
+        'Name': (basestring, False),
+        'RegularExpressionList': ([basestring], True),
         'Scope': (basestring, True),
         'Tags': (Tags, False),
     }
@@ -451,7 +415,7 @@ class RuleGroup(AWSObject):
     props = {
         'Capacity': (integer, False),
         'Description': (basestring, False),
-        'Name': (basestring, True),
+        'Name': (basestring, False),
         'Rules': ([RuleGroupRule], False),
         'Scope': (basestring, False),
         'Tags': (Tags, False),

@@ -3,7 +3,7 @@
 #
 # See LICENSE file for full license.
 from . import AWSObject, AWSProperty, Tags
-from .validators import boolean, integer
+from .validators import boolean, integer, storage_type
 
 
 VALID_LUSTRECONFIGURATION_DEPLOYMENTTYPE = ('PERSISTENT_1', 'SCRATCH_1',
@@ -32,6 +32,9 @@ def validate_lustreconfiguration_perunitstoragethroughput(lustreconfiguration_pe
 
 class LustreConfiguration(AWSProperty):
     props = {
+        'AutomaticBackupRetentionDays': (integer, False),
+        'CopyTagsToBackups': (boolean, False),
+        'DailyAutomaticBackupStartTime': (basestring, False),
         'DeploymentType': (validate_lustreconfiguration_deploymenttype, False),
         'ExportPath': (basestring, False),
         'ImportedFileChunkSize': (integer, False),
@@ -77,6 +80,7 @@ class FileSystem(AWSObject):
         'LustreConfiguration': (LustreConfiguration, False),
         'SecurityGroupIds': ([basestring], False),
         'StorageCapacity': (integer, False),
+        'StorageType': (storage_type, False),
         'SubnetIds': ([basestring], False),
         'Tags': (Tags, False),
         'WindowsConfiguration': (WindowsConfiguration, False),
