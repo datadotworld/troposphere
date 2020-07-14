@@ -134,6 +134,7 @@ class Association(AWSObject):
         'Parameters': (dict, False),
         'ScheduleExpression': (basestring, False),
         'Targets': ([Targets], False),
+        'WaitForSuccessTimeoutSeconds': (integer, False),
     }
 
 
@@ -204,6 +205,7 @@ class Parameter(AWSObject):
 
     props = {
         'AllowedPattern': (basestring, False),
+        'DataType': (basestring, False),
         'Description': (basestring, False),
         'Name': (basestring, False),
         'Policies': (basestring, False),

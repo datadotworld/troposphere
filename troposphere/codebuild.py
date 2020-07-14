@@ -111,6 +111,7 @@ class EnvironmentVariable(AWSProperty):
             valid_types = [
                 'PARAMETER_STORE',
                 'PLAINTEXT',
+                'SECRETS_MANAGER'
             ]
             env_type = self.properties.get('Type')
             if env_type not in valid_types:
@@ -140,7 +141,9 @@ class Environment(AWSProperty):
 
     def validate(self):
         valid_types = [
+            'ARM_CONTAINER',
             'LINUX_CONTAINER',
+            'LINUX_GPU_CONTAINER',
             'WINDOWS_CONTAINER',
         ]
         env_type = self.properties.get('Type')
@@ -168,6 +171,13 @@ class ProjectCache(AWSProperty):
                              ','.join(valid_types))
 
 
+class BuildStatusConfig(AWSProperty):
+    props = {
+        'Context': (basestring, False),
+        'TargetUrl': (basestring, False),
+    }
+
+
 class GitSubmodulesConfig(AWSProperty):
     props = {
         'FetchSubmodules': (boolean, True),
@@ -178,6 +188,7 @@ class Source(AWSProperty):
     props = {
         'Auth': (SourceAuth, False),
         'BuildSpec': (basestring, False),
+        'BuildStatusConfig': (BuildStatusConfig, False),
         'GitCloneDepth': (positive_integer, False),
         'GitSubmodulesConfig': (GitSubmodulesConfig, False),
         'InsecureSsl': (boolean, False),
@@ -379,6 +390,7 @@ class ReportGroup(AWSObject):
     props = {
         'ExportConfig': (ReportExportConfig, True),
         'Name': (basestring, False),
+        'Tags': (Tags, False),
         'Type': (basestring, True),
     }
 

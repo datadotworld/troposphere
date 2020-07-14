@@ -59,6 +59,7 @@ class ContainerDefinition(AWSProperty):
     props = {
         'ContainerHostname': (basestring, False),
         'Environment': (dict, False),
+        'Mode': (basestring, False),
         'ModelDataUrl': (basestring, False),
         'Image': (basestring, True)
     }
@@ -75,12 +76,12 @@ class Model(AWSObject):
     resource_type = "AWS::SageMaker::Model"
 
     props = {
-        'ExecutionRoleArn': (basestring, True),
-        'PrimaryContainer': (ContainerDefinition, True),
         'Containers': ([ContainerDefinition], False),
+        'ExecutionRoleArn': (basestring, True),
         'ModelName': (basestring, False),
+        'PrimaryContainer': (ContainerDefinition, False),
+        'Tags': (Tags, False),
         'VpcConfig': (VpcConfig, False),
-        'Tags': (Tags, False)
     }
 
 
