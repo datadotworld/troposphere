@@ -145,11 +145,28 @@ class Environment(AWSProperty):
             'LINUX_CONTAINER',
             'LINUX_GPU_CONTAINER',
             'WINDOWS_CONTAINER',
+            'WINDOWS_SERVER_2019_CONTAINER',
         ]
         env_type = self.properties.get('Type')
         if env_type not in valid_types:
             raise ValueError('Environment Type: must be one of %s' %
                              ','.join(valid_types))
+
+
+class BatchRestrictions(AWSProperty):
+    props = {
+        'ComputeTypesAllowed': ([basestring], False),
+        'MaximumBuildsAllowed': (integer, False),
+    }
+
+
+class ProjectBuildBatchConfig(AWSProperty):
+    props = {
+        'CombineArtifacts': (boolean, False),
+        'Restrictions': (BatchRestrictions, False),
+        'ServiceRole': (basestring, False),
+        'TimeoutInMins': (integer, False),
+    }
 
 
 class ProjectCache(AWSProperty):
@@ -346,6 +363,7 @@ class Project(AWSObject):
     props = {
         'Artifacts': (Artifacts, True),
         'BadgeEnabled': (boolean, False),
+        'BuildBatchConfig': (ProjectBuildBatchConfig, False),
         'Cache': (ProjectCache, False),
         'Description': (basestring, False),
         'EncryptionKey': (basestring, False),
@@ -388,6 +406,7 @@ class ReportGroup(AWSObject):
     resource_type = "AWS::CodeBuild::ReportGroup"
 
     props = {
+        'DeleteReports': (boolean, False),
         'ExportConfig': (ReportExportConfig, True),
         'Name': (basestring, False),
         'Tags': (Tags, False),

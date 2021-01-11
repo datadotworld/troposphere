@@ -2,6 +2,7 @@
 # Regions
 #
 
+AF_SOUTH_1 = 'af-south-1'
 AP_EAST_1 = 'ap-east-1'
 AP_NORTHEAST_1 = 'ap-northeast-1'
 AP_NORTHEAST_2 = 'ap-northeast-2'
@@ -17,6 +18,8 @@ EU_WEST_2 = 'eu-west-2'
 EU_WEST_3 = 'eu-west-3'
 EU_CENTRAL_1 = 'eu-central-1'
 EU_NORTH_1 = 'eu-north-1'
+EU_SOUTH_1 = 'eu-south-1'
+ME_SOUTH_1 = 'me-south-1'
 SA_EAST_1 = 'sa-east-1'
 US_EAST_1 = 'us-east-1'
 US_EAST_2 = 'us-east-2'
@@ -29,13 +32,23 @@ US_WEST_2 = 'us-west-2'
 # Availability Zones
 #
 
+AF_SOUTH_1A = 'af-south-1a'
+AF_SOUTH_1B = 'af-south-1b'
+AF_SOUTH_1C = 'af-south-1c'
+
+AP_EAST_1A = 'ap-east-1a'
+AP_EAST_1B = 'ap-east-1b'
+AP_EAST_1C = 'ap-east-1c'
+
 AP_NORTHEAST_1A = 'ap-northeast-1a'
 AP_NORTHEAST_1B = 'ap-northeast-1b'
 AP_NORTHEAST_1C = 'ap-northeast-1c'
+AP_NORTHEAST_1D = 'ap-northeast-1d'
 
 AP_NORTHEAST_2A = 'ap-northeast-2a'
 AP_NORTHEAST_2B = 'ap-northeast-2b'
 AP_NORTHEAST_2C = 'ap-northeast-2c'
+AP_NORTHEAST_2D = 'ap-northeast-2d'
 
 AP_NORTHEAST_3A = 'ap-northeast-3a'
 
@@ -49,9 +62,11 @@ AP_SOUTHEAST_2C = 'ap-southeast-2c'
 
 AP_SOUTH_1A = 'ap-south-1a'
 AP_SOUTH_1B = 'ap-south-1b'
+AP_SOUTH_1C = 'ap-south-1c'
 
 CA_CENTRAL_1A = 'ca-central-1a'
 CA_CENTRAL_1B = 'ca-central-1b'
+CA_CENTRAL_1D = 'ca-central-1d'
 
 CN_NORTH_1A = 'cn-north-1a'
 CN_NORTH_1B = 'cn-north-1b'
@@ -79,6 +94,14 @@ EU_CENTRAL_1C = 'eu-central-1c'
 EU_NORTH_1A = 'eu-north-1a'
 EU_NORTH_1B = 'eu-north-1b'
 EU_NORTH_1C = 'eu-north-1c'
+
+EU_SOUTH_1A = 'eu-south-1a'
+EU_SOUTH_1B = 'eu-south-1b'
+EU_SOUTH_1C = 'eu-south-1c'
+
+ME_SOUTH_1A = 'me-south-1a'
+ME_SOUTH_1B = 'me-south-1b'
+ME_SOUTH_1C = 'me-south-1c'
 
 SA_EAST_1A = 'sa-east-1a'
 SA_EAST_1B = 'sa-east-1b'
@@ -173,6 +196,16 @@ M6G_12XLARGE = 'm6g.12xlarge'
 M6G_16XLARGE = 'm6g.16xlarge'
 M6G_METAL = 'm6g.metal'
 
+M6GD_MEDIUM = 'm6gd.medium'
+M6GD_LARGE = 'm6gd.large'
+M6GD_XLARGE = 'm6gd.xlarge'
+M6GD_2XLARGE = 'm6gd.2xlarge'
+M6GD_4XLARGE = 'm6gd.4xlarge'
+M6GD_8XLARGE = 'm6gd.8xlarge'
+M6GD_12XLARGE = 'm6gd.12xlarge'
+M6GD_16XLARGE = 'm6gd.16xlarge'
+M6GD_METAL = 'm6gd.metal'
+
 M5_LARGE = 'm5.large'
 M5_XLARGE = 'm5.xlarge'
 M5_2XLARGE = 'm5.2xlarge'
@@ -259,6 +292,15 @@ C5_9XLARGE = 'c5.9xlarge'
 C5_18XLARGE = 'c5.18xlarge'
 C5_METAL = 'c5.metal'
 
+C5A_LARGE = 'c5a.large'
+C5A_XLARGE = 'c5a.xlarge'
+C5A_2XLARGE = 'c5a.2xlarge'
+C5A_4XLARGE = 'c5a.4xlarge'
+C5A_8XLARGE = 'c5a.8xlarge'
+C5A_12XLARGE = 'c5a.12xlarge'
+C5A_16XLARGE = 'c5a.16xlarge'
+C5A_24XLARGE = 'c5a.24xlarge'
+
 C5D_LARGE = 'c5d.large'
 C5D_XLARGE = 'c5d.xlarge'
 C5D_2XLARGE = 'c5d.2xlarge'
@@ -274,6 +316,26 @@ C5N_4XLARGE = 'c5n.4xlarge'
 C5N_9XLARGE = 'c5n.9xlarge'
 C5N_18XLARGE = 'c5n.18xlarge'
 C5N_METAL = 'c5n.metal'
+
+C6G_MEDIUM = 'c6g.medium'
+C6G_LARGE = 'c6g.large'
+C6G_XLARGE = 'c6g.xlarge'
+C6G_2XLARGE = 'c6g.2xlarge'
+C6G_4XLARGE = 'c6g.4xlarge'
+C6G_8XLARGE = 'c6g.8xlarge'
+C6G_12XLARGE = 'c6g.12xlarge'
+C6G_16XLARGE = 'c6g.16xlarge'
+C6G_METAL = 'c6g.metal'
+
+C6GD_MEDIUM = 'c6gd.medium'
+C6GD_LARGE = 'c6gd.large'
+C6GD_XLARGE = 'c6gd.xlarge'
+C6GD_2XLARGE = 'c6gd.2xlarge'
+C6GD_4XLARGE = 'c6gd.4xlarge'
+C6GD_8XLARGE = 'c6gd.8xlarge'
+C6GD_12XLARGE = 'c6gd.12xlarge'
+C6GD_16XLARGE = 'c6gd.16xlarge'
+C6GD_METAL = 'c6gd.metal'
 
 R3_LARGE = 'r3.large'
 R3_XLARGE = 'r3.xlarge'
@@ -429,6 +491,26 @@ R5DN_12XLARGE = 'r5dn.12xlarge'
 R5DN_16XLARGE = 'r5dn.16xlarge'
 R5DN_24XLARGE = 'r5dn.24xlarge'
 
+R6G_MEDIUM = 'r6g.medium'
+R6G_LARGE = 'r6g.large'
+R6G_XLARGE = 'r6g.xlarge'
+R6G_2XLARGE = 'r6g.2xlarge'
+R6G_4XLARGE = 'r6g.4xlarge'
+R6G_8XLARGE = 'r6g.8xlarge'
+R6G_12XLARGE = 'r6g.12xlarge'
+R6G_16XLARGE = 'r6g.16xlarge'
+R6G_METAL = 'r6g.metal'
+
+R6GD_MEDIUM = 'r6gd.medium'
+R6GD_LARGE = 'r6gd.large'
+R6GD_XLARGE = 'r6gd.xlarge'
+R6GD_2XLARGE = 'r6gd.2xlarge'
+R6GD_4XLARGE = 'r6gd.4xlarge'
+R6GD_8XLARGE = 'r6gd.8xlarge'
+R6GD_12XLARGE = 'r6gd.12xlarge'
+R6GD_16XLARGE = 'r6gd.16xlarge'
+R6GD_METAL = 'r6gd.metal'
+
 P2_XLARGE = 'p2.xlarge'
 P2_8XLARGE = 'p2.8xlarge'
 P2_16XLARGE = 'p2.16xlarge'
@@ -492,7 +574,9 @@ DB_M5_LARGE = 'db.m5.large'
 DB_M5_XLARGE = 'db.m5.xlarge'
 DB_M5_2XLARGE = 'db.m5.2xlarge'
 DB_M5_4XLARGE = 'db.m5.4xlarge'
+DB_M5_8XLARGE = 'db.m5.8xlarge'
 DB_M5_12XLARGE = 'db.m5.12xlarge'
+DB_M5_16XLARGE = 'db.m5.16xlarge'
 DB_M5_24XLARGE = 'db.m5.24xlarge'
 
 DB_R3_LARGE = 'db.r3.large'
@@ -512,7 +596,9 @@ DB_R5_LARGE = 'db.r5.large'
 DB_R5_XLARGE = 'db.r5.xlarge'
 DB_R5_2XLARGE = 'db.r5.2xlarge'
 DB_R5_4XLARGE = 'db.r5.4xlarge'
+DB_R5_8XLARGE = 'db.r5.8xlarge'
 DB_R5_12XLARGE = 'db.r5.12xlarge'
+DB_R5_16XLARGE = 'db.r5.16xlarge'
 DB_R5_24XLARGE = 'db.r5.24xlarge'
 
 DB_X1_16XLARGE = 'db.x1.16xlarge'
@@ -563,9 +649,13 @@ CACHE_T1_MICRO = 'cache.t1.micro'
 # Elasticsearch instance types
 #
 
+# Note: t2.micro.elasticsearch is deprecated.
 ELASTICSEARCH_T2_MICRO = 't2.micro.elasticsearch'
 ELASTICSEARCH_T2_SMALL = 't2.small.elasticsearch'
 ELASTICSEARCH_T2_MEDIUM = 't2.medium.elasticsearch'
+
+ELASTICSEARCH_T3_SMALL = 't3.small.elasticsearch'
+ELASTICSEARCH_T3_MEDIUM = 't3.medium.elasticsearch'
 
 ELASTICSEARCH_M3_MEDIUM = 'm3.medium.elasticsearch'
 ELASTICSEARCH_M3_LARGE = 'm3.large.elasticsearch'
@@ -578,11 +668,24 @@ ELASTICSEARCH_M4_2XLARGE = 'm4.2xlarge.elasticsearch'
 ELASTICSEARCH_M4_4XLARGE = 'm4.4xlarge.elasticsearch'
 ELASTICSEARCH_M4_10XLARGE = 'm4.10xlarge.elasticsearch'
 
+ELASTICSEARCH_M5_LARGE = 'm5.large.elasticsearch'
+ELASTICSEARCH_M5_XLARGE = 'm5.xlarge.elasticsearch'
+ELASTICSEARCH_M5_2XLARGE = 'm5.2xlarge.elasticsearch'
+ELASTICSEARCH_M5_4XLARGE = 'm5.4xlarge.elasticsearch'
+ELASTICSEARCH_M5_12XLARGE = 'm5.12xlarge.elasticsearch'
+
 ELASTICSEARCH_C4_LARGE = 'c4.large.elasticsearch'
 ELASTICSEARCH_C4_XLARGE = 'c4.xlarge.elasticsearch'
 ELASTICSEARCH_C4_2XLARGE = 'c4.2xlarge.elasticsearch'
 ELASTICSEARCH_C4_4XLARGE = 'c4.4xlarge.elasticsearch'
 ELASTICSEARCH_C4_8XLARGE = 'c4.8xlarge.elasticsearch'
+
+ELASTICSEARCH_C5_LARGE = 'c5.large.elasticsearch'
+ELASTICSEARCH_C5_XLARGE = 'c5.xlarge.elasticsearch'
+ELASTICSEARCH_C5_2XLARGE = 'c5.2xlarge.elasticsearch'
+ELASTICSEARCH_C5_4XLARGE = 'c5.4xlarge.elasticsearch'
+ELASTICSEARCH_C5_9XLARGE = 'c5.9xlarge.elasticsearch'
+ELASTICSEARCH_C5_18XLARGE = 'c5.18xlarge.elasticsearch'
 
 ELASTICSEARCH_R3_LARGE = 'r3.large.elasticsearch'
 ELASTICSEARCH_R3_XLARGE = 'r3.xlarge.elasticsearch'
@@ -597,8 +700,24 @@ ELASTICSEARCH_R4_4XLARGE = 'r4.4xlarge.elasticsearch'
 ELASTICSEARCH_R4_8XLARGE = 'r4.8xlarge.elasticsearch'
 ELASTICSEARCH_R4_16XLARGE = 'r4.16xlarge.elasticsearch'
 
+ELASTICSEARCH_R5_LARGE = 'r5.large.elasticsearch'
+ELASTICSEARCH_R5_XLARGE = 'r5.xlarge.elasticsearch'
+ELASTICSEARCH_R5_2XLARGE = 'r5.2xlarge.elasticsearch'
+ELASTICSEARCH_R5_4XLARGE = 'r5.4xlarge.elasticsearch'
+ELASTICSEARCH_R5_12XLARGE = 'r5.12xlarge.elasticsearch'
+
 ELASTICSEARCH_I2_XLARGE = 'i2.xlarge.elasticsearch'
 ELASTICSEARCH_I2_2XLARGE = 'i2.2xlarge.elasticsearch'
+
+ELASTICSEARCH_I3_LARGE = 'i3.large.elasticsearch'
+ELASTICSEARCH_I3_XLARGE = 'i3.xlarge.elasticsearch'
+ELASTICSEARCH_I3_2XLARGE = 'i3.2xlarge.elasticsearch'
+ELASTICSEARCH_I3_4XLARGE = 'i3.4xlarge.elasticsearch'
+ELASTICSEARCH_I3_8XLARGE = 'i3.8xlarge.elasticsearch'
+ELASTICSEARCH_I3_16XLARGE = 'i3.16xlarge.elasticsearch'
+
+ELASTICSEARCH_ULTRAWARM1_MEDIUM = 'ultrawarm1.medium.elasticsearch'
+ELASTICSEARCH_ULTRAWARM1_LARGE = 'ultrawarm1.large.elasticsearch'
 
 #
 # Kafka brokers instance types

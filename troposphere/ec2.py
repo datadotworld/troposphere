@@ -50,6 +50,15 @@ class Tag(AWSProperty):
         super(Tag, self).__init__(**kwargs)
 
 
+class CarrierGateway(AWSObject):
+    resource_type = "AWS::EC2::CarrierGateway"
+
+    props = {
+        'Tags': (Tags, False),
+        'VpcId': (basestring, True),
+    }
+
+
 class CustomerGateway(AWSObject):
     resource_type = "AWS::EC2::CustomerGateway"
 
@@ -112,9 +121,12 @@ class FlowLog(AWSObject):
         'DeliverLogsPermissionArn': (basestring, False),
         'LogDestination': (basestring, False),
         'LogDestinationType': (basestring, False),
+        'LogFormat': (basestring, False),
         'LogGroupName': (basestring, False),
+        'MaxAggregationInterval': (integer, False),
         'ResourceId': (basestring, True),
         'ResourceType': (basestring, True),
+        'Tags': (Tags, False),
         'TrafficType': (basestring, True),
     }
 
@@ -581,6 +593,7 @@ class SecurityGroupRule(AWSProperty):
         'DestinationSecurityGroupId': (basestring, False),
         'FromPort': (network_port, False),
         'IpProtocol': (basestring, True),
+        'SourcePrefixListId': (basestring, False),
         'SourceSecurityGroupId': (basestring, False),
         'SourceSecurityGroupName': (basestring, False),
         'SourceSecurityGroupOwnerId': (basestring, False),
@@ -1002,6 +1015,19 @@ class TagSpecifications(AWSProperty):
     }
 
 
+class CapacityReservationTarget(AWSProperty):
+    props = {
+        'CapacityReservationId': (basestring, False),
+    }
+
+
+class CapacityReservationSpecification(AWSProperty):
+    props = {
+        'CapacityReservationPreference': (basestring, False),
+        'CapacityReservationTarget': (CapacityReservationTarget, False),
+    }
+
+
 class SpotOptions(AWSProperty):
     props = {
         'BlockDurationMinutes': (integer, False),
@@ -1043,6 +1069,8 @@ class LaunchTemplateElasticInferenceAccelerator(AWSProperty):
 class LaunchTemplateData(AWSProperty):
     props = {
         'BlockDeviceMappings': ([LaunchTemplateBlockDeviceMapping], False),
+        'CapacityReservationSpecification':
+            (CapacityReservationSpecification, False),
         'CpuOptions': (CpuOptions, False),
         'CreditSpecification': (LaunchTemplateCreditSpecification, False),
         'DisableApiTermination': (boolean, False),

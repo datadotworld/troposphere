@@ -133,6 +133,7 @@ class Api(AWSObject):
         'CorsConfiguration': (Cors, False),
         'CredentialsArn': (basestring, False),
         'Description': (basestring, False),
+        'DisableExecuteApiEndpoint': (boolean, False),
         'DisableSchemaValidation': (boolean, False),
         'FailOnWarnings': (boolean, False),
         'Name': (basestring, False),
@@ -169,9 +170,11 @@ class Authorizer(AWSObject):
     props = {
         'ApiId': (basestring, True),
         'AuthorizerCredentialsArn': (basestring, False),
+        'AuthorizerPayloadFormatVersion': (basestring, False),
         'AuthorizerResultTtlInSeconds': (validate_authorizer_ttl, False),
         'AuthorizerType': (validate_authorizer_type, True),
         'AuthorizerUri': (basestring, False),
+        'EnableSimpleResponses': (boolean, False),
         'IdentitySource': ([basestring], True),
         'IdentityValidationExpression': (basestring, False),
         'JwtConfiguration': (JWTConfiguration, False),
@@ -197,12 +200,20 @@ class DomainNameConfiguration(AWSProperty):
     }
 
 
+class MutualTlsAuthentication(AWSProperty):
+    props = {
+        'TruststoreUri': (basestring, False),
+        'TruststoreVersion': (basestring, False),
+    }
+
+
 class DomainName(AWSObject):
     resource_type = "AWS::ApiGatewayV2::DomainName"
 
     props = {
         'DomainName': (basestring, True),
         'DomainNameConfigurations': ([DomainNameConfiguration], False),
+        'MutualTlsAuthentication': (MutualTlsAuthentication, False),
         'Tags': (dict, False),
     }
 

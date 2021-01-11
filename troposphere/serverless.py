@@ -7,11 +7,16 @@ import types
 
 from . import AWSObject, AWSProperty
 from .apigateway import AccessLogSetting, CanarySetting, MethodSetting
-from .awslambda import Environment, ProvisionedConcurrencyConfiguration
+from .awslambda import (
+    Environment, ProvisionedConcurrencyConfiguration, DestinationConfig
+)
 from .awslambda import VPCConfig, validate_memory_size
 from .dynamodb import ProvisionedThroughput, SSESpecification
 from .s3 import Filter
-from .validators import exactly_one, positive_integer, mutually_exclusive
+from .validators import (
+    exactly_one, positive_integer, mutually_exclusive, integer_range
+)
+
 
 try:
     from awacs.aws import PolicyDocument
@@ -212,6 +217,59 @@ class Cors(AWSProperty):
     }
 
 
+class Route53(AWSProperty):
+    props = {
+        'DistributionDomainName': (basestring, False),
+        'EvaluateTargetHealth': (bool, False),
+        'HostedZoneId': (basestring, False),
+        'HostedZoneName': (basestring, False),
+        'IpV6': (bool, False),
+    }
+
+    def validate(self):
+        conds = [
+            'HostedZoneId',
+            'HostedZoneName',
+        ]
+        mutually_exclusive(self.__class__.__name__, self.properties, conds)
+
+
+class Domain(AWSProperty):
+    props = {
+        'BasePath': (list, False),
+        'CertificateArn': (basestring, True),
+        'DomainName': (basestring, True),
+        'EndpointConfiguration': (basestring, False),
+        'Route53': (Route53, False),
+    }
+
+    def validate(self):
+        valid_types = ['REGIONAL', 'EDGE']
+        if ('EndpointConfiguration' in self.properties and
+                self.properties['EndpointConfiguration'] not in valid_types):
+            raise ValueError(
+                'EndpointConfiguration must be either REGIONAL or EDGE'
+            )
+
+
+class EndpointConfiguration(AWSProperty):
+    props = {
+        "Type": (basestring, False),
+        "VPCEndpointIds": (list, False)
+    }
+
+    def validate(self):
+        valid_types = ["REGIONAL", "EDGE", "PRIVATE"]
+        if (
+            "Type" in self.properties
+            and self.properties["Type"]
+            not in valid_types
+        ):
+            raise ValueError(
+                "EndpointConfiguration Type must be REGIONAL, EDGE or PRIVATE"
+            )
+
+
 class Api(AWSObject):
     resource_type = "AWS::Serverless::Api"
 
@@ -225,9 +283,11 @@ class Api(AWSObject):
         'Cors': ((basestring, Cors), False),
         'DefinitionBody': (dict, False),
         'DefinitionUri': (basestring, False),
-        'EndpointConfiguration': (basestring, False),
+        'Domain': (Domain, False),
+        'EndpointConfiguration': (EndpointConfiguration, False),
         'MethodSettings': ([MethodSetting], False),
         'Name': (basestring, False),
+        'OpenApiVersion': (basestring, False),
         'StageName': (basestring, True),
         "TracingEnabled": (bool, False),
         'Variables': (dict, False),
@@ -307,7 +367,14 @@ class KinesisEvent(AWSObject):
     props = {
         'Stream': (basestring, True),
         'StartingPosition': (starting_position_validator, True),
-        'BatchSize': (positive_integer, False)
+        'BatchSize': (positive_integer, False),
+        'BisectBatchOnFunctionError': (bool, False),
+        'DestinationConfig': (DestinationConfig, False),
+        'Enabled': (bool, False),
+        'MaximumBatchingWindowInSeconds': (positive_integer, False),
+        'MaximumRecordAgeInSeconds': (integer_range(60, 604800), False),
+        'MaximumRetryAttempts': (positive_integer, False),
+        'ParallelizationFactor': (integer_range(1, 10), False)
     }
 
 

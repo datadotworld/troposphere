@@ -311,7 +311,8 @@ def compliance_level(level):
 
 def operating_system(os):
     valid_os = ['WINDOWS', 'AMAZON_LINUX', 'AMAZON_LINUX_2', 'UBUNTU',
-                'REDHAT_ENTERPRISE_LINUX', 'SUSE', 'CENTOS']
+                'REDHAT_ENTERPRISE_LINUX', 'SUSE', 'CENTOS', 'DEBIAN',
+                'ORACLE_LINUX']
     if os not in valid_os:
         raise ValueError(
             'OperatingSystem must be one of: "%s"' % (
@@ -363,7 +364,7 @@ def vpn_tunnel_inside_cidr(cidr):
 
 
 def vpc_endpoint_type(endpoint_type):
-    valid_types = ['Interface', 'Gateway']
+    valid_types = ['Interface', 'Gateway', 'GatewayLoadBalancer']
     if endpoint_type not in valid_types:
         raise ValueError(
             'VpcEndpointType must be one of: "%s"' % (
@@ -472,6 +473,73 @@ def cloudfront_forward_type(forward):
     return(forward)
 
 
+def cloudfront_cache_cookie_behavior(cookie_behavior):
+    valid_values = ['none', 'whitelist', 'allExcept', 'all']
+    if cookie_behavior not in valid_values:
+        raise ValueError(
+            'CookieBehavior must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(cookie_behavior)
+
+
+def cloudfront_cache_header_behavior(header_behavior):
+    valid_values = ['none', 'whitelist']
+    if header_behavior not in valid_values:
+        raise ValueError(
+            'HeaderBehavior must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(header_behavior)
+
+
+def cloudfront_cache_query_string_behavior(query_string_behavior):
+    valid_values = ['none', 'whitelist', 'all']
+    if query_string_behavior not in valid_values:
+        raise ValueError(
+            'QueryStringBehavior must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(query_string_behavior)
+
+
+def cloudfront_origin_request_cookie_behavior(cookie_behavior):
+    valid_values = ['none', 'whitelist', 'all']
+    if cookie_behavior not in valid_values:
+        raise ValueError(
+            'CookieBehavior must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(cookie_behavior)
+
+
+def cloudfront_origin_request_header_behavior(header_behavior):
+    valid_values = [
+        'none', 'whitelist', 'allViewer', 'allViewerAndWhitelistCloudFront']
+    if header_behavior not in valid_values:
+        raise ValueError(
+            'HeaderBehavior must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(header_behavior)
+
+
+def cloudfront_origin_request_query_string_behavior(query_string_behavior):
+    valid_values = ['none', 'whitelist', 'all']
+    if query_string_behavior not in valid_values:
+        raise ValueError(
+            'QueryStringBehavior must be one of: "%s"' % (
+                ', '.join(valid_values)
+            )
+        )
+    return(query_string_behavior)
+
+
 def priceclass_type(price_class):
     valid_values = ['PriceClass_100', 'PriceClass_200',
                     'PriceClass_All']
@@ -537,7 +605,8 @@ def storage_type(storage_type):
 
 
 def canary_runtime_version(runtime_version):
-    valid_runtime_versions = ['syn-1.0']
+    valid_runtime_versions = [
+        'syn-nodejs-2.0', 'syn-nodejs-2.0-beta', 'syn-1.0']
     if runtime_version not in valid_runtime_versions:
         raise ValueError(
             'RuntimeVersion must be one of: "%s"' % (
@@ -583,7 +652,7 @@ def schedule_pipelineexecutionstartcondition(startcondition):
 
 
 def ebsinstanceblockdevicespecification_volume_type(type):
-    valid_types = ['gp2', 'io1', 'sc1', 'st1', 'standard']
+    valid_types = ['gp2', 'io1', 'io2', 'sc1', 'st1', 'standard']
     if type not in valid_types:
         raise ValueError(
             'VolumeType must be one of: "%s"' % (
@@ -680,3 +749,13 @@ def findingsfilter_action(action):
             )
         )
     return action
+
+
+def ecs_efs_encryption_status(status):
+    valid_status = ['ENABLED', 'DISABLED']
+    if status not in valid_status:
+        raise ValueError(
+            'ECS EFS Encryption in transit can only be one of: "%s"' % (
+                ', '.join(valid_status))
+        )
+    return status

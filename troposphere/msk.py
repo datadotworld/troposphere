@@ -35,6 +35,18 @@ class BrokerNodeGroupInfo(AWSProperty):
     }
 
 
+class Scram(AWSProperty):
+    props = {
+        'Enabled': (boolean, True),
+    }
+
+
+class Sasl(AWSProperty):
+    props = {
+        'Scram': (Scram, True),
+    }
+
+
 class Tls(AWSProperty):
     props = {
         'CertificateAuthorityArnList': ([basestring], False),
@@ -43,6 +55,7 @@ class Tls(AWSProperty):
 
 class ClientAuthentication(AWSProperty):
     props = {
+        'Sasl': (Sasl, False),
         'Tls': (Tls, False),
     }
 
@@ -102,7 +115,7 @@ class OpenMonitoring(AWSProperty):
 class Firehose(AWSProperty):
     props = {
         'DeliveryStream': (basestring, True),
-        "Enabled": (boolean, True),
+        'Enabled': (boolean, True),
     }
 
 

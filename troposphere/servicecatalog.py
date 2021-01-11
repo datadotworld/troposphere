@@ -70,6 +70,7 @@ class CloudFormationProvisionedProduct(AWSObject):
         'AcceptLanguage': (basestring, False),
         'NotificationArns': ([basestring], False),
         'PathId': (basestring, False),
+        'PathName': (basestring, False),
         'ProductId': (basestring, False),
         'ProductName': (basestring, False),
         'ProvisionedProductName': (basestring, False),
@@ -102,7 +103,7 @@ class LaunchRoleConstraint(AWSObject):
         'LocalRoleName': (basestring, False),
         'PortfolioId': (basestring, True),
         'ProductId': (basestring, True),
-        'RoleArn': (basestring, True),
+        'RoleArn': (basestring, False),
     }
 
 

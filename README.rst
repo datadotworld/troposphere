@@ -47,7 +47,7 @@ To install troposphere with `awacs <https://github.com/cloudtools/awacs>`_
 
     $ pip install troposphere[policy]
 
-Alternatively, you can run use setup.py to install by cloning this repository
+Alternatively, you can use `setup.py` to install by cloning this repository
 and issuing:
 
 .. code:: sh
@@ -152,10 +152,12 @@ Currently supported AWS resource types
 - `AWS::ApiGateway`_
 - `AWS::ApiGatewayV2`_
 - `AWS::AppConfig`_
+- `AWS::AppFlow`_
 - `AWS::AppMesh`_
 - `AWS::AppStream`_
 - `AWS::AppSync`_
 - `AWS::ApplicationAutoScaling`_
+- `AWS::ApplicationInsights`_
 - `AWS::Athena`_
 - `AWS::AutoScaling`_
 - `AWS::AutoScalingPlans`_
@@ -170,10 +172,12 @@ Currently supported AWS resource types
 - `AWS::CloudFront`_
 - `AWS::CloudTrail`_
 - `AWS::CloudWatch`_
+- `AWS::CodeArtifact`_
 - `AWS::CodeBuild`_
 - `AWS::CodeCommit`_
 - `AWS::CodeDeploy`_
 - `AWS::CodeGuruProfiler`_
+- `AWS::CodeGuruReviewer`_
 - `AWS::CodePipeline`_
 - `AWS::CodeStar`_
 - `AWS::CodeStarConnections`_
@@ -217,6 +221,7 @@ Currently supported AWS resource types
 - `AWS::IoTAnalytics`_
 - `AWS::IoTEvents`_
 - `AWS::KMS`_
+- `AWS::Kendra`_
 - `AWS::Kinesis`_
 - `AWS::KinesisAnalytics`_
 - `AWS::KinesisAnalyticsV2`_
@@ -250,6 +255,7 @@ Currently supported AWS resource types
 - `AWS::SNS`_
 - `AWS::SQS`_
 - `AWS::SSM`_
+- `AWS::SSO`_
 - `AWS::SageMaker`_
 - `AWS::SecretsManager`_
 - `AWS::SecurityHub`_
@@ -258,6 +264,7 @@ Currently supported AWS resource types
 - `AWS::ServiceDiscovery`_
 - `AWS::StepFunctions`_
 - `AWS::Synthetics`_
+- `AWS::Timestream`_
 - `AWS::Transfer`_
 - `AWS::WAF`_
 - `AWS::WAFRegional`_
@@ -388,10 +395,12 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`AWS::ApiGateway`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ApiGateway.html
 .. _`AWS::ApiGatewayV2`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ApiGatewayV2.html
 .. _`AWS::AppConfig`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AppConfig.html
+.. _`AWS::AppFlow`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AppFlow.html
 .. _`AWS::AppMesh`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AppMesh.html
 .. _`AWS::AppStream`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AppStream.html
 .. _`AWS::AppSync`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AppSync.html
 .. _`AWS::ApplicationAutoScaling`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ApplicationAutoScaling.html
+.. _`AWS::ApplicationInsights`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ApplicationInsights.html
 .. _`AWS::Athena`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Athena.html
 .. _`AWS::AutoScaling`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AutoScaling.html
 .. _`AWS::AutoScalingPlans`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_AutoScalingPlans.html
@@ -406,10 +415,12 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`AWS::CloudFront`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CloudFront.html
 .. _`AWS::CloudTrail`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CloudTrail.html
 .. _`AWS::CloudWatch`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CloudWatch.html
+.. _`AWS::CodeArtifact`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CodeArtifact.html
 .. _`AWS::CodeBuild`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CodeBuild.html
 .. _`AWS::CodeCommit`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CodeCommit.html
 .. _`AWS::CodeDeploy`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CodeDeploy.html
 .. _`AWS::CodeGuruProfiler`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CodeGuruProfiler.html
+.. _`AWS::CodeGuruReviewer`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CodeGuruReviewer.html
 .. _`AWS::CodePipeline`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CodePipeline.html
 .. _`AWS::CodeStarConnections`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CodeStarConnections.html
 .. _`AWS::CodeStarNotifications`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CodeStarNotifications.html
@@ -453,6 +464,7 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`AWS::IoTAnalytics`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_IoTAnalytics.html
 .. _`AWS::IoTEvents`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_IoTEvents.html
 .. _`AWS::KMS`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_KMS.html
+.. _`AWS::Kendra`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Kendra.html
 .. _`AWS::Kinesis`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Kinesis.html
 .. _`AWS::KinesisAnalytics`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_KinesisAnalytics.html
 .. _`AWS::KinesisAnalyticsV2`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_KinesisAnalyticsV2.html
@@ -486,6 +498,7 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`AWS::SNS`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SNS.html
 .. _`AWS::SQS`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SQS.html
 .. _`AWS::SSM`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SSM.html
+.. _`AWS::SSO`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SSO.html
 .. _`AWS::SageMaker`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SageMaker.html
 .. _`AWS::SecretsManager`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SecretsManager.html
 .. _`AWS::SecurityHub`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_SecurityHub.html
@@ -494,6 +507,7 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`AWS::ServiceDiscovery`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ServiceDiscovery.html
 .. _`AWS::StepFunctions`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_StepFunctions.html
 .. _`AWS::Synthetics`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Synthetics.html
+.. _`AWS::Timestream`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Timestream.html
 .. _`AWS::Transfer`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_Transfer.html
 .. _`AWS::WAF`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_WAF.html
 .. _`AWS::WAFRegional`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_WAFRegional.html
